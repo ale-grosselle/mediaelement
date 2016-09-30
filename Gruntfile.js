@@ -48,18 +48,18 @@ module.exports = function(grunt) {
                     'src/js/mep-library.js',
                     'src/js/mep-player.js'
                 ].concat(featureSources || [
-                    'src/js/mep-feature-playpause.js',
+                    /*'src/js/mep-feature-playpause.js',
                     'src/js/mep-feature-stop.js',
                     'src/js/mep-feature-progress.js',
                     'src/js/mep-feature-time.js',
-                    'src/js/mep-feature-volume.js',
-                    'src/js/mep-feature-fullscreen.js',
-                    'src/js/mep-feature-speed.js',
+                    'src/js/mep-feature-volume.js',*/
+                    'src/js/mep-feature-fullscreen.js'
+                    /*'src/js/mep-feature-speed.js',
                     'src/js/mep-feature-tracks.js',
                     'src/js/mep-feature-contextmenu.js',
                     'src/js/mep-feature-skipback.js',
                     'src/js/mep-feature-postroll.js'
-                    ]),
+                    */]),
                 dest: 'build/mediaelementplayer.js'
             },
             bundle: {
