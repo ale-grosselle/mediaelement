@@ -1144,7 +1144,7 @@
 			var
 			loading =
 				$('<div class="mejs-overlay mejs-layer">'+
-					'<div class="mejs-overlay-loading"><span></span></div>'+
+					'<div class="mejs-overlay-loading th-loader-wrapper"><span class="th-loader"></span></div>'+
 				'</div>')
 				.hide() // start out hidden
 				.appendTo(layers),
@@ -1156,9 +1156,7 @@
 				.appendTo(layers),
 			// this needs to come last so it's on top
 			bigPlay =
-				$('<div class="mejs-overlay mejs-layer mejs-overlay-play">'+
-					'<div class="mejs-overlay-button" role="button" aria-label="' + mejs.i18n.t('Play') + '" aria-pressed="false"></div>'+
-				'</div>')
+				$('<div class="th-overlay-play mejs-overlay mejs-layer mejs-overlay-play"></div>')
 				.appendTo(layers)
 				.bind('click', function() {	 // Removed 'touchstart' due issues on Samsung Android devices where a tap on bigPlay started and immediately stopped the video
 					if (t.options.clickToPlayPause) {
