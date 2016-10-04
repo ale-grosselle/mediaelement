@@ -35,10 +35,8 @@ module.exports = function(grunt) {
                     'src/js/me-featuredetection.js',
                     'src/js/me-mediaelements.js',
                     'src/js/me-shim.js',
-                    'src/js/me-i18n.js'
-                    // Bug #1263
-                    //'src/js/me-i18n-locale-de.js',
-                    //'src/js/me-i18n-locale-zh.js'
+                    'src/js/me-i18n.js',
+                    'src/js/me-i18n-locale-en.js'
                 ],
                 dest: 'build/mediaelement.js'
             },
@@ -48,18 +46,20 @@ module.exports = function(grunt) {
                     'src/js/mep-library.js',
                     'src/js/mep-player.js'
                 ].concat(featureSources || [
-                    /*'src/js/mep-feature-playpause.js',
-                    'src/js/mep-feature-stop.js',
-                    'src/js/mep-feature-progress.js',
-                    'src/js/mep-feature-time.js',
-                    'src/js/mep-feature-volume.js',*/
-                    'src/js/mep-feature-fullscreen.js'
-                    /*'src/js/mep-feature-speed.js',
-                    'src/js/mep-feature-tracks.js',
-                    'src/js/mep-feature-contextmenu.js',
-                    'src/js/mep-feature-skipback.js',
-                    'src/js/mep-feature-postroll.js'
-                    */]),
+                        'src/js/mep-feature-playpause.js',
+                        'src/js/mep-feature-stop.js',
+                        'src/js/mep-feature-progress.js',
+                        'src/js/mep-feature-time.js',
+                        'src/js/mep-feature-volume.js',
+                        'src/js/mep-feature-fullscreen.js',
+                        'src/js/mep-feature-speed.js',
+                        'src/js/mep-feature-tracks.js',
+                        'src/js/mep-feature-sourcechooser.js',
+                        'src/js/mep-feature-contextmenu.js',
+                        'src/js/mep-feature-skipback.js',
+                        'src/js/mep-feature-postroll.js',
+                        'src/js/mep-feature-markers.js'
+                    ]),
                 dest: 'build/mediaelementplayer.js'
             },
             bundle: {
@@ -117,11 +117,19 @@ module.exports = function(grunt) {
                 dest    : 'build/',
                 flatten : true,
                 filter  : 'isFile'
+            },
+            translation: {
+                expand  : true,
+                cwd     : 'src/js/',
+                src     : ['me-i18n-locale-*.js'],
+                dest    : 'build/lang',
+                flatten : true,
+                filter  : 'isFile'
             }
         },
         clean: {
-          build: ['build'],
-          temp:  ['tmp']
+            build: ['build'],
+            temp:  ['tmp']
         },
 
         // Task that compiles flashmediaelement.swf using the free Flex SDK on Linux/Mac.
@@ -193,5 +201,6 @@ module.exports = function(grunt) {
         'shell:buildFlash', 'shell:buildFlashCDN', 'shell:buildFlashDebug', 'clean:temp']);
 
     grunt.registerTask('html5only', ['concat', 'removelogging', 'uglify', 'cssmin', 'copy', 'clean:temp']);
+    grunt.registerTask('debug_html5', ['concat', 'uglify', 'cssmin', 'copy', 'clean:temp']);
 
 };
