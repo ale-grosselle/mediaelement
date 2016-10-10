@@ -37,5 +37,7 @@
 
 		// new: 13/06/2015
 		public static var METADATA_READY:String = "metadataready";
+
+		public static var FRAG_PARSING_METADATA:String = "hlsFragParsingMetadata";
 	}
 }
