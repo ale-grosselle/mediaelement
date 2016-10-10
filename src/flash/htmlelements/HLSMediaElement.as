@@ -29,9 +29,7 @@ import flash.external.ExternalInterface;
 		private var _isEnded:Boolean = false;
 		private var _volume:Number = 1;
 		private var _isMuted:Boolean = false;
-
-	private var _firstTime:Boolean = true;
-
+		private var _firstTime:Boolean = true;
 		private var _bytesLoaded:Number = 0;
 		private var _bytesTotal:Number = 0;
 		private var _bufferedTime:Number = 0;
@@ -58,6 +56,7 @@ import flash.external.ExternalInterface;
 			_hls.addEventListener(HLSEvent.MEDIA_TIME,_mediaTimeHandler);
 			_hls.addEventListener(HLSEvent.PLAYBACK_STATE,_stateHandler);
 			_hls.addEventListener(HLSEvent.FRAGMENT_PLAYING,_fragmentHandler);
+			_hls.addEventListener(HLSEvent.ID3_UPDATED, _id3Ready);
 			_hls.stream.soundTransform = new SoundTransform(_volume);
 			_video.attachNetStream(_hls.stream);
 		}
@@ -73,20 +72,12 @@ import flash.external.ExternalInterface;
 			_element.logMessage(event.toString());
 		};
 
+		private function _id3Ready(event:HLSEvent):void{
+			_element.sendEventCustom(HtmlMediaEvent.FRAG_PARSING_METADATA, {data: event.ID3Data});
+		};
+
 		private function _fragmentHandler(event:HLSEvent):void {
-		var id3Tags:Array = event.playMetrics.id3tag_list;
-		var i:Number = 0;
-		var id3Obj:Object = {id3Tags:{}};
-		if(id3Tags.length > 0){
-			for(;i < id3Tags.length; i++){
-				var singleId3:Object = id3Tags[i];
-				var end:Number = singleId3.data.indexOf("3DI");
-				var start:Number = 0;
-				id3Obj.id3Tags[singleId3.id] = singleId3.data.slice(start, end);
-			}
-			_element.sendEventCustom(HtmlMediaEvent.METADATA_READY, id3Obj);
-		}
-		sendEvent(HtmlMediaEvent.METADATA_READY, id3Obj);
+			sendEvent(HtmlMediaEvent.FRAGMENT_PLAYING);
 		};
 
 		private function _manifestHandler(event:HLSEvent):void {
@@ -99,7 +90,7 @@ import flash.external.ExternalInterface;
 			sendEvent(HtmlMediaEvent.CANPLAY);
 			if(_autoplay || _playqueued) {
 				_playqueued = false;
-				_hls.stream.play();
+				_hls.stream.play(null, -1);
 			}
 		};
 
@@ -121,7 +112,7 @@ import flash.external.ExternalInterface;
 
 		private function _stateHandler(event:HLSEvent):void {
 			_hlsState = event.state;
-			//Log.txt("state:"+ _hlsState);
+
 			switch(event.state) {
 				case HLSPlayStates.IDLE:
 					break;
@@ -129,12 +120,16 @@ import flash.external.ExternalInterface;
 				case HLSPlayStates.PLAYING_BUFFERING:
 					_isPaused = true;
 					sendEvent(HtmlMediaEvent.BUFFERING);
+					if (_firstTime && _autoplay){
+						play();
+						_firstTime = false;
+					}
 					break;
 				case HLSPlayStates.PLAYING:
-				if (_firstTime) {
-					play();
-					_firstTime = false;
-				}
+					if (_firstTime) {
+						play();
+						_firstTime = false;
+					}
 					_isPaused = false;
 					_isEnded = false;
 					_video.visible = true;
