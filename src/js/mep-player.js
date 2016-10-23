@@ -1290,9 +1290,9 @@
 			media.addEventListener('error',function(e) {
 				t.handleError(e);
 				loading.hide();
-				bigPlay.hide();
-				error.show();
-				error.find('.mejs-overlay-error').html("Error loading this resource");
+				//bigPlay.hide();
+				//error.show();
+				//error.find('.mejs-overlay-error').html("Error loading this resource");
 			}, false);
 
 			media.addEventListener('keydown', function(e) {
