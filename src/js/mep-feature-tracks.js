@@ -69,8 +69,9 @@
 								'</li>'	+
 							'</ul>'+
 						'</div>'+
-					'</div>')
-						.appendTo(controls);
+					'</div>');
+			//always append after rail:
+			controls.find('.mejs-time-rail').after(player.captionsButton);
 
 
 			var subtitleCount = 0;
@@ -236,14 +237,8 @@
 
 					t.loadNextTrack();
 
-				};
-
-
-			$.ajax({
-				url: track.src,
-				dataType: "text",
-				success: function(d) {
-
+				},
+				onSuccess = function(d){
 					// parse the loaded file
 					if (typeof d == "string" && (/<tt\s+xml/ig).exec(d)) {
 						track.entries = mejs.TrackFormatParser.dfxp.parse(d);
@@ -265,11 +260,20 @@
 						t.setupSlides(track);
 					}
 				},
-				error: function() {
+				onError = function(){
 					t.removeTrackButton(track.srclang);
 					t.loadNextTrack();
-				}
-			});
+				};
+			if(track.data){
+				onSuccess(track.data);
+			}else{
+				$.ajax({
+					url: track.src,
+					dataType: "text",
+					success: onSuccess,
+					error: onError
+				});
+			}
 		},
 
 		enableTrackButton: function(lang, label) {
@@ -284,7 +288,7 @@
 					.prop('disabled',false)
 				.siblings('label')
 					.html( label );
-
+			
 			// auto select
 			if (t.options.startLanguage == lang) {
 				$('#' + t.id + '_captions_' + lang).prop('checked', true).trigger('click');

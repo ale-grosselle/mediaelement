@@ -199,7 +199,9 @@
 								}
 						}
 				}
-		]
+		],
+		// array of track
+		tracks: []
 	};
 
 	mejs.mepIndex = 0;
@@ -1344,7 +1346,7 @@
 				tracktags = t.$media.find('track');
 
 			// store for use by plugins
-			t.tracks = [];
+			t.tracks = t.options.tracks;
 			tracktags.each(function(index, track) {
 
 				track = $(track);
