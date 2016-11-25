@@ -1,5 +1,4 @@
 ﻿package htmlelements {
-import flash.external.ExternalInterface;
 	import flash.display.Sprite;
 	import flash.media.Video;
 	import flash.media.SoundTransform;
@@ -29,8 +28,6 @@ import flash.external.ExternalInterface;
 		private var _isEnded:Boolean = false;
 		private var _volume:Number = 1;
 		private var _isMuted:Boolean = false;
-
-	private var _firstTime:Boolean = true;
 
 		private var _bytesLoaded:Number = 0;
 		private var _bytesTotal:Number = 0;
@@ -74,19 +71,7 @@ import flash.external.ExternalInterface;
 		};
 
 		private function _fragmentHandler(event:HLSEvent):void {
-		var id3Tags:Array = event.playMetrics.id3tag_list;
-		var i:Number = 0;
-		var id3Obj:Object = {id3Tags:{}};
-		if(id3Tags.length > 0){
-			for(;i < id3Tags.length; i++){
-				var singleId3:Object = id3Tags[i];
-				var end:Number = singleId3.data.indexOf("3DI");
-				var start:Number = 0;
-				id3Obj.id3Tags[singleId3.id] = singleId3.data.slice(start, end);
-			}
-			_element.sendEventCustom(HtmlMediaEvent.METADATA_READY, id3Obj);
-		}
-		sendEvent(HtmlMediaEvent.METADATA_READY, id3Obj);
+			sendEvent(HtmlMediaEvent.FRAGMENT_PLAYING);
 		};
 
 		private function _manifestHandler(event:HLSEvent):void {
@@ -116,7 +101,7 @@ import flash.external.ExternalInterface;
 				_videoHeight = videoHeight;
 				_videoWidth = videoWidth;
 				_element.setVideoSize(_videoWidth, _videoHeight);
-			}		
+			}
 		};
 
 		private function _stateHandler(event:HLSEvent):void {
@@ -131,10 +116,6 @@ import flash.external.ExternalInterface;
 					sendEvent(HtmlMediaEvent.BUFFERING);
 					break;
 				case HLSPlayStates.PLAYING:
-				if (_firstTime) {
-					play();
-					_firstTime = false;
-				}
 					_isPaused = false;
 					_isEnded = false;
 					_video.visible = true;
@@ -186,7 +167,6 @@ import flash.external.ExternalInterface;
 		public function load():void{
 			//Log.txt("HLSMediaElement:load");
 			if(_url) {
-			_firstTime = true;
 				sendEvent(HtmlMediaEvent.LOADSTART);
 				_hls.load(_url);
 			}
@@ -204,7 +184,6 @@ import flash.external.ExternalInterface;
 
 		public function setSrc(url:String):void{
 			//Log.txt("HLSMediaElement:setSrc:"+url);
-		_firstTime = true;
 			stop();
 			_url = url;
 			_hls.load(_url);
