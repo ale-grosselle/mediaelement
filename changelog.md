@@ -1,5 +1,38 @@
 ### Version History
 
+*2.23.5 (2017/01/06)*
+
+* Fixed typo that caused Wordpress support for translations to be broken (#1984) @ron666
+
+*2.23.4 (2016/10/21)*
+
+* Adjusted captions in fullscreen mode (https://github.com/johndyer/mediaelement/pull/1885) @chdh
+* Validation to prevent AJAX call if `<track>` source does not exist (https://github.com/johndyer/mediaelement/pull/1886) @Mister-King
+
+*2.23.3 (2016/10/13)*
+
+* Added Dutch translation for MediaElement (https://github.com/johndyer/mediaelement/pull/1863) @leonardder
+* Added new translation to demo file @ron666
+* Integrated fix for Drupal 7 running with `jQuery.noConflict()` (https://github.com/johndyer/mediaelement/pull/1857) @CaineThanatos
+* Fixed minor issue with Skip Back button @ron666
+* Fixed declaration of Brazilian Portuguese translation file (https://github.com/johndyer/mediaelement/pull/1872) @OlivierJaquemet 
+* Refactored `mejs.i18n` and expanded to allow pluralization (https://github.com/johndyer/mediaelement/pull/1867) @ron666
+* Updated `me-i18n-locale-de.js` to accept plurals (https://github.com/johndyer/mediaelement/pull/1879) @SoftCreatR
+* Send focus to correct control based on location to improve Accessibility (https://github.com/johndyer/mediaelement/pull/1818) @astephenb
+* Standardized language files and cleaned with JSLint (https://github.com/johndyer/mediaelement/pull/1883) @SoftCreatR
+
+*2.23.2 (2016/10/01)*
+
+* Added fix for time rail width described on #1356 @ron666
+* Integrated markers feature (https://github.com/johndyer/mediaelement/pull/1814) @hkasera
+* Added French translation for Source Chooser feature (https://github.com/johndyer/mediaelement/pull/1850) @OlivierJaquemet
+* Fixed German translation file (https://github.com/johndyer/mediaelement/pull/1852) @SoftCreatR
+* Add complete list of supported language in translation demo file (https://github.com/johndyer/mediaelement/pull/1853) @OlivierJaquemet
+* Fix for controls when no features are set in the configuration (https://github.com/johndyer/mediaelement/pull/1797) @ron666
+* Fixed issues with translatable elements in several features files that were not being translated properly and fixed typo in Spanish translation @ron666
+* Fixed YouTube loop issue according to @michaelbucklin recommendation @ron666
+* Fixed compilation error when using YUICompressor on i18n file (https://github.com/johndyer/mediaelement/pull/1861) @OlivierJaquemet
+
 *2.23.1 (2016/09/26)*
 
 * Fix documentation in regards of control icons with CSS in different path (https://github.com/johndyer/mediaelement/pull/1837) @jangrewe

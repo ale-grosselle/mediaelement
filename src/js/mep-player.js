@@ -271,6 +271,8 @@
 
 		controlsAreVisible: true,
 
+		controlsForceHidden: false,
+
 		init: function() {
 
 			var
@@ -341,8 +343,16 @@
 							// if user clicks on the Play/Pause button in the control bar once it attempts
 							// to hide it
 							if (!t.hasMsNativeFullScreen) {
-								var playButton = t.container.find('.mejs-playpause-button > button');
-								playButton.focus();
+								// If e.relatedTarget appears before container, send focus to play button,
+								// else send focus to last control button.
+								var btnSelector = '.mejs-playpause-button > button';
+
+								if (mejs.Utility.isNodeAfter(e.relatedTarget, t.container[0])) {
+									btnSelector = '.mejs-controls .mejs-button:last-child > button';
+								}
+
+								var button = t.container.find(btnSelector);
+								button.focus();
 							}
 						}
 					});
@@ -438,7 +448,7 @@
 
 			doAnimation = typeof doAnimation == 'undefined' || doAnimation;
 
-			if (t.controlsAreVisible)
+			if (t.controlsAreVisible || t.controlsForceHidden)
 				return;
 
 			if (doAnimation) {
@@ -477,7 +487,7 @@
 
 			doAnimation = typeof doAnimation == 'undefined' || doAnimation;
 
-			if (!t.controlsAreVisible || t.options.alwaysShowControls || t.keyboardAction || t.media.paused || t.media.ended)
+			if (t.controlsForceHidden && !t.controlsAreVisible)
 				return;
 
 			if (doAnimation) {
@@ -710,7 +720,13 @@
 					}
 
 					if(t.options.hideVideoControlsOnLoad) {
+						var onPlayDisableForce = function() {
+							this.controlsForceHidden = false;
+							this.media.removeEventListener('playing', onPlayDisableForce, false);
+						}.bind(t);
+						t.controlsForceHidden = true;
 						t.hideControls(false);
+						t.media.addEventListener('playing', onPlayDisableForce, false);
 					}
 
 					// check for autoplay
@@ -764,7 +780,11 @@
 
 						}
 					}
-					t.media.pause();
+					if (t.media.pluginType === 'youtube') {
+						t.media.stop();
+					} else {
+						t.media.pause();
+					}
 
 					if (t.setProgressRail) {
 						t.setProgressRail();

@@ -237,41 +237,40 @@
 
 					t.loadNextTrack();
 
-				},
-				onSuccess = function(d){
-					// parse the loaded file
-					if (typeof d == "string" && (/<tt\s+xml/ig).exec(d)) {
-						track.entries = mejs.TrackFormatParser.dfxp.parse(d);
-					} else {
-						track.entries = mejs.TrackFormatParser.webvtt.parse(d);
-					}
-
-					after();
-
-					if (track.kind == 'chapters') {
-						t.media.addEventListener('play', function() {
-							if (t.media.duration > 0) {
-								t.displayChapters(track);
-							}
-						}, false);
-					}
-
-					if (track.kind == 'slides') {
-						t.setupSlides(track);
-					}
-				},
-				onError = function(){
-					t.removeTrackButton(track.srclang);
-					t.loadNextTrack();
 				};
-			if(track.data){
-				onSuccess(track.data);
-			}else{
+
+
+			if (track.src !== undefined || track.src !== "") {
 				$.ajax({
 					url: track.src,
 					dataType: "text",
-					success: onSuccess,
-					error: onError
+					success: function(d) {
+
+						// parse the loaded file
+						if (typeof d == "string" && (/<tt\s+xml/ig).exec(d)) {
+							track.entries = mejs.TrackFormatParser.dfxp.parse(d);
+						} else {
+							track.entries = mejs.TrackFormatParser.webvtt.parse(d);
+						}
+
+						after();
+
+						if (track.kind == 'chapters') {
+							t.media.addEventListener('play', function() {
+								if (t.media.duration > 0) {
+									t.displayChapters(track);
+								}
+							}, false);
+						}
+
+						if (track.kind == 'slides') {
+							t.setupSlides(track);
+						}
+					},
+					error: function() {
+						t.removeTrackButton(track.srclang);
+						t.loadNextTrack();
+					}
 				});
 			}
 		},
@@ -288,7 +287,7 @@
 					.prop('disabled',false)
 				.siblings('label')
 					.html( label );
-			
+
 			// auto select
 			if (t.options.startLanguage == lang) {
 				$('#' + t.id + '_captions_' + lang).prop('checked', true).trigger('click');
