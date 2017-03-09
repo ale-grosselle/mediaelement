@@ -11,11 +11,11 @@
 		buildjumpforward: function(player, controls, layers, media) {
 			var
 				t = this,
-				defaultTitle = mejs.i18n.t('mejs.time-jump-forward', t.options.jumpForwardInterval),
+				defaultTitle = mejs.i18n.t('th-media.time-jump-forward', t.options.jumpForwardInterval),
 				forwardTitle = t.options.jumpForwardText ? t.options.jumpForwardText : defaultTitle,
 				// create the loop button
 				loop =
-				$('<div class="mejs-button mejs-jump-forward-button">' +
+				$('<div class="th-media-button th-media-jump-forward-button">' +
 					'<button type="button" aria-controls="' + t.id + '" title="' + forwardTitle + '" aria-label="' + forwardTitle + '">' + t.options.jumpForwardInterval + '</button>' +
 				'</div>')
 				// append it to the toolbar

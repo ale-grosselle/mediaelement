@@ -1,4 +1,4 @@
-.mejs-offscreen{
+.th-media-offscreen{
 	/* Accessibility: hide screen reader texts (and prefer "top" for RTL languages).  Reference: http://blog.rrwd.nl/2015/04/04/the-screen-reader-text-class-why-and-how/ */
 	clip: rect(1px 1px 1px 1px); /* IE6, IE7 - no likey commas */
 	clip: rect(1px, 1px, 1px, 1px); /* IE8-IE11 - we likey commas, no support for clip-path */
@@ -9,7 +9,7 @@
 	overflow: hidden;
 }
 
-.mejs-container {
+.th-media-container {
 	position: relative;
 	background: #000;
 	font-family: "Helvetica", Arial, serif;
@@ -18,24 +18,24 @@
 	text-indent: 0;
 }
 
-.mejs-fill-container,.mejs-fill-container .mejs-container{
+.th-media-fill-container,.th-media-fill-container .th-media-container{
 	width: 100%;
 	height: 100%;
 }
 
-.mejs-fill-container{
+.th-media-fill-container{
 	overflow: hidden;
 }
 
-.mejs-container:focus {
+.th-media-container:focus {
 	outline: none;
 }
 
-.me-plugin {
+.th-me-plugin {
 	position: absolute;
 }
 
-.mejs-embed, .mejs-embed body {
+.th-media-embed, .th-media-embed body {
 	width: 100%;
 	height: 100%;
 	margin: 0;
@@ -44,12 +44,12 @@
 	overflow: hidden;
 }
 
-.mejs-fullscreen {
+.th-media-fullscreen {
 	/* set it to not show scroll bars so 100% will work */
 	overflow: hidden !important;
 }
 
-.mejs-container-fullscreen {
+.th-media-container-fullscreen {
 	position: fixed;
 	left: 0;
 	top: 0;
@@ -58,24 +58,24 @@
 	overflow: hidden;
 	z-index: 1000;
 }
-.mejs-container-fullscreen .mejs-mediaelement,
-.mejs-container-fullscreen video {
+.th-media-container-fullscreen .th-media-mediaelement,
+.th-media-container-fullscreen video {
 	width: 100%;
 	height: 100%;
 }
 
-.mejs-clear {
+.th-media-clear {
 	clear: both;
 }
 
 /* Start: LAYERS */
-.mejs-background {
+.th-media-background {
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
-.mejs-mediaelement {
+.th-media-mediaelement {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -83,7 +83,7 @@
 	height: 100%;
 }
 
-.mejs-poster {
+.th-media-poster {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -91,26 +91,26 @@
 	background-position: 50% 50% ;
 	background-repeat: no-repeat ;
 }
-:root .mejs-poster img {
+:root .th-media-poster img {
 	display: none ;
 }
 
-.mejs-poster img {
+.th-media-poster img {
 	border: 0;
 	padding: 0;
 }
 
-.mejs-overlay {
+.th-media-overlay {
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
-.mejs-overlay-play {
+.th-media-overlay-play {
 	cursor: pointer;
 }
 
-.mejs-overlay-button {
+.th-media-overlay-button {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -120,15 +120,15 @@
 	background: url("bigplay.svg") no-repeat;
 }
 
-.no-svg .mejs-overlay-button {
+.th-no-svg .th-media-overlay-button {
 	background-image: url("bigplay.png");
 }
 
-.mejs-overlay:hover .mejs-overlay-button {
+.th-media-overlay:hover .th-media-overlay-button {
 	background-position: 0 -100px ;
 }
 
-.mejs-overlay-loading {
+.th-media-overlay-loading {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -146,7 +146,7 @@
 	background: linear-gradient(rgba(50,50,50,0.9), rgba(0,0,0,0.9));
 }
 
-.mejs-overlay-loading span {
+.th-media-overlay-loading span {
 	display: block;
 	width: 80px;
 	height: 80px;
@@ -156,7 +156,7 @@
 /* End: LAYERS */
 
 /* Start: CONTROL BAR */
-.mejs-container .mejs-controls {
+.th-media-container .th-media-controls {
 	position: absolute;
 	list-style-type: none;
 	margin: 0;
@@ -174,7 +174,7 @@
 	height: 30px;
 	width: 100%;
 }
-.mejs-container .mejs-controls  div {
+.th-media-container .th-media-controls  div {
 	list-style-type: none;
 	background-image: none;
 	display: block;
@@ -189,7 +189,7 @@
 	border: 0;
 }
 
-.mejs-controls .mejs-button button {
+.th-media-controls .th-media-button button {
 	cursor: pointer;
 	display: block;
 	font-size: 0;
@@ -204,19 +204,19 @@
 	background: transparent url("controls.svg") no-repeat;
 }
 
-.no-svg .mejs-controls .mejs-button button {
+.th-no-svg .th-media-controls .th-media-button button {
 	background-image: url("controls.png");
 }
 
 /* :focus for accessibility */
-.mejs-controls .mejs-button button:focus {
+.th-media-controls .th-media-button button:focus {
 	outline: dotted 1px #999;
 }
 
 /* End: CONTROL BAR */
 
 /* Start: Time (Current / Duration) */
-.mejs-container .mejs-controls .mejs-time {
+.th-media-container .th-media-controls .th-media-time {
 	color: #fff;
 	display: block;
 	height: 17px;
@@ -229,7 +229,7 @@
 	box-sizing: content-box;
 }
 
-.mejs-container .mejs-controls .mejs-time a {
+.th-media-container .th-media-controls .th-media-time a {
 	color: #fff;
 	font-size: 11px;
 	line-height: 12px;
@@ -241,27 +241,27 @@
 /* End: Time (Current / Duration) */
 
 /* Start: Play/Pause/Stop */
-.mejs-controls .mejs-play button {
+.th-media-controls .th-media-play button {
 	background-position: 0 0;
 }
 
-.mejs-controls .mejs-pause button {
+.th-media-controls .th-media-pause button {
 	background-position: 0 -16px;
 }
 
-.mejs-controls .mejs-stop button {
+.th-media-controls .th-media-stop button {
 	background-position: -112px 0;
 }
 /* Start: Play/Pause/Stop */
 
 /* Start: Progress Bar */
-.mejs-controls div.mejs-time-rail {
+.th-media-controls div.th-media-time-rail {
 	direction: ltr;
 	width: 200px;
 	padding-top: 5px;
 }
 
-.mejs-controls .mejs-time-rail span, .mejs-controls .mejs-time-rail a {
+.th-media-controls .th-media-time-rail span, .th-media-controls .th-media-time-rail a {
 	display: block;
 	position: absolute;
 	width: 180px;
@@ -272,7 +272,7 @@
 	cursor: pointer;
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-total {
+.th-media-controls .th-media-time-rail .th-media-time-total {
 	margin: 5px;
 	background: #333;
 	background: rgba(50,50,50,0.8);
@@ -284,7 +284,7 @@
 	background: linear-gradient(rgba(30,30,30,0.8), rgba(60,60,60,0.8));
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-buffering {
+.th-media-controls .th-media-time-rail .th-media-time-buffering {
 	width: 100%;
 	background-image: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
 	background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
@@ -309,7 +309,7 @@
 @-o-keyframes buffering-stripes { from {background-position: 0 0;} to {background-position: 30px 0;} }
 @keyframes buffering-stripes { from {background-position: 0 0;} to {background-position: 30px 0;} }
 
-.mejs-controls .mejs-time-rail .mejs-time-loaded {
+.th-media-controls .th-media-time-rail .th-media-time-loaded {
 	background: #3caac8;
 	background: rgba(60,170,200,0.8);
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(44,124,145,0.8)), to(rgba(78,183,212,0.8)));
@@ -321,7 +321,7 @@
 	width: 0;
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-current {
+.th-media-controls .th-media-time-rail .th-media-time-current {
 	background: #fff;
 	background: rgba(255,255,255,0.8);
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255,255,255,0.9)), to(rgba(200,200,200,0.8)));
@@ -333,7 +333,7 @@
 	width: 0;
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-handle {
+.th-media-controls .th-media-time-rail .th-media-time-handle {
 	display: none;
 	position: absolute;
 	margin: 0;
@@ -348,7 +348,7 @@
 	text-align: center;
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-float {
+.th-media-controls .th-media-time-rail .th-media-time-float {
 	position: absolute;
 	display: none;
 	background: #eee;
@@ -361,7 +361,7 @@
 	color: #111;
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-float-current {
+.th-media-controls .th-media-time-rail .th-media-time-float-current {
 	margin: 2px;
 	width: 30px;
 	display: block;
@@ -369,7 +369,7 @@
 	left: 0;
 }
 
-.mejs-controls .mejs-time-rail .mejs-time-float-corner {
+.th-media-controls .th-media-time-rail .th-media-time-float-corner {
 	position: absolute;
 	display: block;
 	width: 0;
@@ -384,53 +384,53 @@
 	left: 13px;
 }
 
-.mejs-long-video .mejs-controls .mejs-time-rail .mejs-time-float {
+.th-media-long-video .th-media-controls .th-media-time-rail .th-media-time-float {
 	width: 48px;
 }
 
-.mejs-long-video .mejs-controls .mejs-time-rail .mejs-time-float-current {
+.th-media-long-video .th-media-controls .th-media-time-rail .th-media-time-float-current {
 	width: 44px;
 }
 
-.mejs-long-video .mejs-controls .mejs-time-rail .mejs-time-float-corner {
+.th-media-long-video .th-media-controls .th-media-time-rail .th-media-time-float-corner {
 	left: 18px;
 }
 
 /*
-.mejs-controls .mejs-time-rail:hover .mejs-time-handle {
+.th-media-controls .th-media-time-rail:hover .th-media-time-handle {
 	visibility:visible;
 }
 */
 /* End: Progress Bar */
 
 /* Start: Fullscreen */
-.mejs-controls .mejs-fullscreen-button button {
+.th-media-controls .th-media-fullscreen-button button {
 	background-position: -32px 0;
 }
 
-.mejs-controls .mejs-unfullscreen button {
+.th-media-controls .th-media-unfullscreen button {
 	background-position: -32px -16px;
 }
 /* End: Fullscreen */
 
 
 /* Start: Mute/Volume */
-.mejs-controls .mejs-volume-button {
+.th-media-controls .th-media-volume-button {
 }
 
-.mejs-controls .mejs-mute button {
+.th-media-controls .th-media-mute button {
 	background-position: -16px -16px;
 }
 
-.mejs-controls .mejs-unmute button {
+.th-media-controls .th-media-unmute button {
 	background-position: -16px 0;
 }
 
-.mejs-controls .mejs-volume-button {
+.th-media-controls .th-media-volume-button {
 	position: relative;
 }
 
-.mejs-controls .mejs-volume-button .mejs-volume-slider {
+.th-media-controls .th-media-volume-button .th-media-volume-slider {
 	display: none;
 	height: 115px;
 	width: 25px;
@@ -446,19 +446,19 @@
 	margin: 0;
 }
 
-.mejs-controls .mejs-volume-button:hover {
+.th-media-controls .th-media-volume-button:hover {
 	-webkit-border-radius: 0 0 4px 4px;
 	-moz-border-radius: 0 0 4px 4px;
 	border-radius: 0 0 4px 4px;
 }
 
 /*
-.mejs-controls .mejs-volume-button:hover .mejs-volume-slider {
+.th-media-controls .th-media-volume-button:hover .th-media-volume-slider {
 	display: block;
 }
 */
 
-.mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-total {
+.th-media-controls .th-media-volume-button .th-media-volume-slider .th-media-volume-total {
 	position: absolute;
 	left: 11px;
 	top: 8px;
@@ -469,7 +469,7 @@
 	margin: 0;
 }
 
-.mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-current {
+.th-media-controls .th-media-volume-button .th-media-volume-slider .th-media-volume-current {
 	position: absolute;
 	left: 11px;
 	top: 8px;
@@ -480,7 +480,7 @@
 	margin: 0;
 }
 
-.mejs-controls .mejs-volume-button .mejs-volume-slider .mejs-volume-handle {
+.th-media-controls .th-media-volume-button .th-media-volume-slider .th-media-volume-handle {
 	position: absolute;
 	left: 4px;
 	top: -3px;
@@ -496,7 +496,7 @@
 }
 
 /* horizontal version */
-.mejs-controls a.mejs-horizontal-volume-slider {
+.th-media-controls a.th-media-horizontal-volume-slider {
 	height: 26px;
 	width: 56px;
 	position: relative;
@@ -505,7 +505,7 @@
 	vertical-align: middle;
 }
 
-.mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-total {
+.th-media-controls .th-media-horizontal-volume-slider .th-media-horizontal-volume-total {
 	position: absolute;
 	left: 0;
 	top: 11px;
@@ -527,7 +527,7 @@
 	background: linear-gradient(rgba(30,30,30,0.8), rgba(60,60,60,0.8));
 }
 
-.mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-current {
+.th-media-controls .th-media-horizontal-volume-slider .th-media-horizontal-volume-current {
 	position: absolute;
 	left: 0;
 	top: 11px;
@@ -549,21 +549,21 @@
 	background: linear-gradient(rgba(255,255,255,0.9), rgba(200,200,200,0.8));
 }
 
-.mejs-controls .mejs-horizontal-volume-slider .mejs-horizontal-volume-handle {
+.th-media-controls .th-media-horizontal-volume-slider .th-media-horizontal-volume-handle {
 	display: none;
 }
 
 /* End: Mute/Volume */
 
 /* Start: Track (Captions and Chapters) */
-.mejs-controls .mejs-captions-button {
+.th-media-controls .th-media-captions-button {
 	position: relative;
 }
 
-.mejs-controls .mejs-captions-button button {
+.th-media-controls .th-media-captions-button button {
 	background-position: -48px 0;
 }
-.mejs-controls .mejs-captions-button .mejs-captions-selector {
+.th-media-controls .th-media-captions-button .th-media-captions-selector {
 	visibility: hidden;
 	position: absolute;
 	bottom: 26px;
@@ -580,11 +580,11 @@
 	border-radius: 0;
 }
 
-.mejs-controls .mejs-captions-button:hover  .mejs-captions-selector {
+.th-media-controls .th-media-captions-button:hover  .th-media-captions-selector {
 	visibility: visible;
 }
 
-.mejs-controls .mejs-captions-button .mejs-captions-selector ul {
+.th-media-controls .th-media-captions-button .th-media-captions-selector ul {
 	margin: 0;
 	padding: 0;
 	display: block;
@@ -592,7 +592,7 @@
 	overflow: hidden;
 }
 
-.mejs-controls .mejs-captions-button .mejs-captions-selector ul li {
+.th-media-controls .th-media-captions-button .th-media-captions-selector ul li {
 	margin: 0 0 6px 0;
 	padding: 0;
 	list-style-type: none !important;
@@ -601,13 +601,13 @@
 	overflow: hidden;
 }
 
-.mejs-controls .mejs-captions-button .mejs-captions-selector ul li input {
+.th-media-controls .th-media-captions-button .th-media-captions-selector ul li input {
 	clear: both;
 	float: left;
 	margin: 3px 3px 0 5px;
 }
 
-.mejs-controls .mejs-captions-button .mejs-captions-selector ul li label {
+.th-media-controls .th-media-captions-button .th-media-captions-selector ul li label {
 	width: 55px;
 	float: left;
 	padding: 4px 0 0 0;
@@ -616,12 +616,12 @@
 	font-size: 10px;
 }
 
-.mejs-controls .mejs-captions-button .mejs-captions-translations {
+.th-media-controls .th-media-captions-button .th-media-captions-translations {
 	font-size: 10px;
 	margin: 0 0 5px 0;
 }
 
-.mejs-chapters {
+.th-media-chapters {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -630,7 +630,7 @@
 	z-index: 1;
 }
 
-.mejs-chapters .mejs-chapter {
+.th-media-chapters .th-media-chapter {
 	position: absolute;
 	float: left;
 	background: #222;
@@ -646,7 +646,7 @@
 	border: 0;
 }
 
-.mejs-chapters .mejs-chapter .mejs-chapter-block {
+.th-media-chapters .th-media-chapter .th-media-chapter-block {
 	font-size: 11px;
 	color: #fff;
 	padding: 5px;
@@ -656,11 +656,11 @@
 	cursor: pointer;
 }
 
-.mejs-chapters .mejs-chapter .mejs-chapter-block-last {
+.th-media-chapters .th-media-chapter .th-media-chapter-block-last {
 	border-right: none;
 }
 
-.mejs-chapters .mejs-chapter .mejs-chapter-block:hover {
+.th-media-chapters .th-media-chapter .th-media-chapter-block:hover {
 	background: #666;
 	background: rgba(102,102,102, 0.7);
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(102,102,102,0.7)), to(rgba(50,50,50,0.6)));
@@ -672,7 +672,7 @@
 	filter: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr=#666666,endColorstr=#323232);
 }
 
-.mejs-chapters .mejs-chapter .mejs-chapter-block .ch-title {
+.th-media-chapters .th-media-chapter .th-media-chapter-block .ch-title {
 	font-size: 12px;
 	font-weight: bold;
 	display: block;
@@ -682,7 +682,7 @@
 	line-height: 12px;
 }
 
-.mejs-chapters .mejs-chapter .mejs-chapter-block .ch-timespan {
+.th-media-chapters .th-media-chapter .th-media-chapter-block .ch-timespan {
 	font-size: 12px;
 	line-height: 12px;
 	margin: 3px 0 4px 0;
@@ -691,7 +691,7 @@
 	text-overflow: ellipsis;
 }
 
-.mejs-captions-layer {
+.th-media-captions-layer {
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -701,28 +701,28 @@
 	color: #fff;
 }
 
-.mejs-captions-layer  a {
+.th-media-captions-layer  a {
 	color: #fff;
 	text-decoration: underline;
 }
 
-.mejs-captions-layer[lang=ar] {
+.th-media-captions-layer[lang=ar] {
 	font-size: 20px;
 	font-weight: normal;
 }
 
-.mejs-captions-position {
+.th-media-captions-position {
 	position: absolute;
 	width: 100%;
 	bottom: 15px;
 	left: 0;
 }
 
-.mejs-captions-position-hover {
+.th-media-captions-position-hover {
 	bottom: 35px;
 }
 
-.mejs-captions-text {
+.th-media-captions-text {
 	padding: 0;
 	background: url("background.png");
 	background: rgba(20, 20, 20, 0.5);
@@ -733,15 +733,15 @@
 /* End: Track (Captions and Chapters) */
 
 /* Start: Error */
-.me-cannotplay {
+.th-me-cannotplay {
 }
 
-.me-cannotplay a {
+.th-me-cannotplay a {
 	color: #fff;
 	font-weight: bold;
 }
 
-.me-cannotplay span {
+.th-me-cannotplay span {
 	padding: 15px;
 	display: block;
 }
@@ -749,35 +749,35 @@
 
 
 /* Start: Loop */
-.mejs-controls .mejs-loop-off button {
+.th-media-controls .th-media-loop-off button {
 	background-position: -64px -16px;
 }
 
-.mejs-controls .mejs-loop-on button {
+.th-media-controls .th-media-loop-on button {
 	background-position: -64px 0;
 }
 
 /* End: Loop */
 
 /* Start: backlight */
-.mejs-controls .mejs-backlight-off button {
+.th-media-controls .th-media-backlight-off button {
 	background-position: -80px -16px;
 }
 
-.mejs-controls .mejs-backlight-on button {
+.th-media-controls .th-media-backlight-on button {
 	background-position: -80px 0;
 }
 /* End: backlight */
 
 /* Start: Picture Controls */
-.mejs-controls .mejs-picturecontrols-button {
+.th-media-controls .th-media-picturecontrols-button {
 	background-position: -96px 0;
 }
 /* End: Picture Controls */
 
 
 /* context menu */
-.mejs-contextmenu {
+.th-media-contextmenu {
 	position: absolute;
 	width: 150px;
 	padding: 10px;
@@ -788,35 +788,35 @@
 	border: solid 1px #999;
 	z-index: 1001; /* make sure it shows on fullscreen */
 }
-.mejs-contextmenu .mejs-contextmenu-separator {
+.th-media-contextmenu .th-media-contextmenu-separator {
 	height: 1px;
 	font-size: 0;
 	margin: 5px 6px;
 	background: #333;
 }
 
-.mejs-contextmenu .mejs-contextmenu-item {
+.th-media-contextmenu .th-media-contextmenu-item {
 	font-family: "Helvetica", Arial, serif;
 	font-size: 12px;
 	padding: 4px 6px;
 	cursor: pointer;
 	color: #333;
 }
-.mejs-contextmenu .mejs-contextmenu-item:hover {
+.th-media-contextmenu .th-media-contextmenu-item:hover {
 	background: #2C7C91;
 	color: #fff;
 }
 
 /* Start: Source Chooser */
-.mejs-controls .mejs-sourcechooser-button {
+.th-media-controls .th-media-sourcechooser-button {
 	position: relative;
 }
 
-.mejs-controls .mejs-sourcechooser-button button {
+.th-media-controls .th-media-sourcechooser-button button {
 	background-position: -128px 0;
 }
 
-.mejs-controls .mejs-sourcechooser-button .mejs-sourcechooser-selector {
+.th-media-controls .th-media-sourcechooser-button .th-media-sourcechooser-selector {
 	position: absolute;
 	bottom: 26px;
 	right: -10px;
@@ -832,7 +832,7 @@
 	border-radius: 0;
 }
 
-.mejs-controls .mejs-sourcechooser-button .mejs-sourcechooser-selector ul {
+.th-media-controls .th-media-sourcechooser-button .th-media-sourcechooser-selector ul {
 	margin: 0;
 	padding: 0;
 	display: block;
@@ -840,7 +840,7 @@
 	overflow: hidden;
 }
 
-.mejs-controls .mejs-sourcechooser-button .mejs-sourcechooser-selector ul li {
+.th-media-controls .th-media-sourcechooser-button .th-media-sourcechooser-selector ul li {
 	margin: 0 0 6px 0;
 	padding: 0;
 	list-style-type: none !important;
@@ -849,13 +849,13 @@
 	overflow: hidden;
 }
 
-.mejs-controls .mejs-sourcechooser-button .mejs-sourcechooser-selector ul li input {
+.th-media-controls .th-media-sourcechooser-button .th-media-sourcechooser-selector ul li input {
 	clear: both;
 	float: left;
 	margin: 3px 3px 0 5px;
 }
 
-.mejs-controls .mejs-sourcechooser-button .mejs-sourcechooser-selector ul li label {
+.th-media-controls .th-media-sourcechooser-button .th-media-sourcechooser-selector ul li label {
 	width: 100px;
 	float: left;
 	padding: 4px 0 0 0;
@@ -866,7 +866,7 @@
 /* End: Source Chooser */
 
 /* Start: Postroll */
-.mejs-postroll-layer {
+.th-media-postroll-layer {
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -877,11 +877,11 @@
 	z-index: 1000;
 	overflow: hidden;
 }
-.mejs-postroll-layer-content {
+.th-media-postroll-layer-content {
 	width: 100%;
 	height: 100%;
 }
-.mejs-postroll-close {
+.th-media-postroll-close {
 	position: absolute;
 	right: 0;
 	top: 0;
@@ -896,12 +896,12 @@
 
 
 /* Start: Speed */
-div.mejs-speed-button {
+div.th-media-speed-button {
 	width: 46px !important;
 	position: relative;
 }
 
-.mejs-controls .mejs-button.mejs-speed-button button {
+.th-media-controls .th-media-button.th-media-speed-button button {
 	background: transparent;
 	width: 36px;
 	font-size: 11px;
@@ -909,7 +909,7 @@ div.mejs-speed-button {
 	color: #ffffff;
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector {
+.th-media-controls .th-media-speed-button .th-media-speed-selector {
 	display: none;
 	position: absolute;
 	top: -100px;
@@ -927,15 +927,15 @@ div.mejs-speed-button {
 }
 
 
-.mejs-controls .mejs-speed-button:hover > .mejs-speed-selector {
+.th-media-controls .th-media-speed-button:hover > .th-media-speed-selector {
 	display: block;
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector ul li label.mejs-speed-selected {
+.th-media-controls .th-media-speed-button .th-media-speed-selector ul li label.th-media-speed-selected {
 	color: rgba(33, 248, 248, 1);
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector ul {
+.th-media-controls .th-media-speed-button .th-media-speed-selector ul {
 	margin: 0;
 	padding: 0;
 	display: block;
@@ -943,7 +943,7 @@ div.mejs-speed-button {
 	overflow: hidden;
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector ul li {
+.th-media-controls .th-media-speed-button .th-media-speed-selector ul li {
 	margin: 0 0 6px 0;
 	padding: 0 10px;
 	list-style-type: none !important;
@@ -952,14 +952,14 @@ div.mejs-speed-button {
 	overflow: hidden;
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector ul li input {
+.th-media-controls .th-media-speed-button .th-media-speed-selector ul li input {
 	clear: both;
 	float: left;
 	margin: 3px 3px 0 5px;
 	display: none;
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector ul li label {
+.th-media-controls .th-media-speed-button .th-media-speed-selector ul li label {
 	width: 60px;
 	float: left;
 	padding: 4px 0 0 0;
@@ -971,7 +971,7 @@ div.mejs-speed-button {
 	cursor: pointer;
 }
 
-.mejs-controls .mejs-speed-button .mejs-speed-selector ul li:hover {
+.th-media-controls .th-media-speed-button .th-media-speed-selector ul li:hover {
 	background-color: rgb(200, 200, 200) !important;
 	background-color: rgba(255,255,255,.4) !important;
 }
@@ -979,10 +979,10 @@ div.mejs-speed-button {
 
 /* Start: Jump Forward */
 
-.mejs-controls .mejs-button.mejs-jump-forward-button {
+.th-media-controls .th-media-button.th-media-jump-forward-button {
 	background: transparent url("jumpforward.png") no-repeat 3px 3px;
 }
-.mejs-controls .mejs-button.mejs-jump-forward-button button {
+.th-media-controls .th-media-button.th-media-jump-forward-button button {
 	background: transparent;
 	font-size: 9px;
 	line-height: normal;
@@ -993,10 +993,10 @@ div.mejs-speed-button {
 
 /* Start: Skip Back */
 
-.mejs-controls .mejs-button.mejs-skip-back-button {
+.th-media-controls .th-media-button.th-media-skip-back-button {
 	background: transparent url("skipback.png") no-repeat 3px 3px;
 }
-.mejs-controls .mejs-button.mejs-skip-back-button button {
+.th-media-controls .th-media-button.th-media-skip-back-button button {
 	background: transparent;
 	font-size: 9px;
 	line-height: normal;
@@ -1004,4 +1004,3 @@ div.mejs-speed-button {
 }
 
 /* End: Skip Back */
-

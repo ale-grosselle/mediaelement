@@ -51,17 +51,17 @@
 			}
 			t.cleartracks(player, controls, layers, media);
 			player.chapters =
-					$('<div class="mejs-chapters mejs-layer"></div>')
+					$('<div class="th-media-chapters th-media-layer"></div>')
 						.prependTo(layers).hide();
 			player.captions =
-					$('<div class="mejs-captions-layer mejs-layer"><div class="mejs-captions-position mejs-captions-position-hover" ' +
-					attr + '><span class="mejs-captions-text"></span></div></div>')
+					$('<div class="th-media-captions-layer th-media-layer"><div class="th-media-captions-position th-media-captions-position-hover" ' +
+					attr + '><span class="th-media-captions-text"></span></div></div>')
 						.prependTo(layers).hide();
-			player.captionsText = player.captions.find('.mejs-captions-text');
+			player.captionsText = player.captions.find('.th-media-captions-text');
 			player.captionsButton =
-					$('<div class="mejs-button mejs-captions-button">'+
+					$('<div class="th-media-button th-media-captions-button">'+
 						'<button type="button" aria-controls="' + t.id + '" title="' + tracksTitle + '" aria-label="' + tracksTitle + '"></button>'+
-						'<div class="mejs-captions-selector">'+
+						'<div class="th-media-captions-selector">'+
 							'<ul>'+
 								'<li>'+
 									'<input type="radio" name="' + player.id + '_captions" id="' + player.id + '_captions_none" value="none" checked="checked" />' +
@@ -71,7 +71,7 @@
 						'</div>'+
 					'</div>');
 			//always append after rail:
-			controls.find('.mejs-time-rail').after(player.captionsButton);
+			controls.find('.th-media-time-rail').after(player.captionsButton);
 
 
 			var subtitleCount = 0;
@@ -96,7 +96,7 @@
 			} else {
 				// hover or keyboard focus
 				player.captionsButton.on( 'mouseenter focusin', function() {
-					$(this).find('.mejs-captions-selector').removeClass('mejs-offscreen');
+					$(this).find('.th-media-captions-selector').removeClass('th-media-offscreen');
 				})
 
 				// handle clicks to the language radio buttons
@@ -106,7 +106,7 @@
 				});
 
 				player.captionsButton.on( 'mouseleave focusout', function() {
-					$(this).find(".mejs-captions-selector").addClass("mejs-offscreen");
+					$(this).find(".th-media-captions-selector").addClass("th-media-offscreen");
 				});
 
 			}
@@ -116,17 +116,17 @@
 				player.container
 					.bind('controlsshown', function () {
 						// push captions above controls
-						player.container.find('.mejs-captions-position').addClass('mejs-captions-position-hover');
+						player.container.find('.th-media-captions-position').addClass('th-media-captions-position-hover');
 
 					})
 					.bind('controlshidden', function () {
 						if (!media.paused) {
 							// move back to normal place
-							player.container.find('.mejs-captions-position').removeClass('mejs-captions-position-hover');
+							player.container.find('.th-media-captions-position').removeClass('th-media-captions-position-hover');
 						}
 					});
 			} else {
-				player.container.find('.mejs-captions-position').addClass('mejs-captions-position-hover');
+				player.container.find('.th-media-captions-position').addClass('th-media-captions-position-hover');
 			}
 
 			player.trackToLoad = -1;
@@ -165,14 +165,14 @@
 				function () {
 					// chapters
 					if (player.hasChapters) {
-						player.chapters.removeClass('mejs-offscreen');
-						player.chapters.fadeIn(200).height(player.chapters.find('.mejs-chapter').outerHeight());
+						player.chapters.removeClass('th-media-offscreen');
+						player.chapters.fadeIn(200).height(player.chapters.find('.th-media-chapter').outerHeight());
 					}
 				},
 				function () {
 					if (player.hasChapters && !media.paused) {
 						player.chapters.fadeOut(200, function() {
-							$(this).addClass('mejs-offscreen');
+							$(this).addClass('th-media-offscreen');
 							$(this).css('display','block');
 						});
 					}
@@ -184,7 +184,7 @@
 
 			// check for autoplay
 			if (player.node.getAttribute('autoplay') !== null) {
-				player.chapters.addClass('mejs-offscreen');
+				player.chapters.addClass('th-media-offscreen');
 			}
 		},
 
@@ -195,12 +195,12 @@
 
 			if (lang == 'none') {
 				t.selectedTrack = null;
-				t.captionsButton.removeClass('mejs-captions-enabled');
+				t.captionsButton.removeClass('th-media-captions-enabled');
 			} else {
 				for (i=0; i<t.tracks.length; i++) {
 					if (t.tracks[i].srclang == lang) {
 						if (t.selectedTrack === null)
-							t.captionsButton.addClass('mejs-captions-enabled');
+							t.captionsButton.addClass('th-media-captions-enabled');
 						t.selectedTrack = t.tracks[i];
 						t.captions.attr('lang', t.selectedTrack.srclang);
 						t.displayCaptions();
@@ -320,15 +320,15 @@
 			t.adjustLanguageBox();
 
 			// remove this from the dropdownlist (if it exists)
-			t.container.find('.mejs-captions-translations option[value=' + lang + ']').remove();
+			t.container.find('.th-media-captions-translations option[value=' + lang + ']').remove();
 		},
 
 		adjustLanguageBox:function() {
 			var t = this;
 			// adjust the size of the outer box
-			t.captionsButton.find('.mejs-captions-selector').height(
-				t.captionsButton.find('.mejs-captions-selector ul').outerHeight(true) +
-				t.captionsButton.find('.mejs-captions-translations').outerHeight(true)
+			t.captionsButton.find('.th-media-captions-selector').height(
+				t.captionsButton.find('.th-media-captions-selector ul').outerHeight(true) +
+				t.captionsButton.find('.th-media-captions-translations').outerHeight(true)
 			);
 		},
 
@@ -368,7 +368,7 @@
 				for (i=0; i<track.entries.times.length; i++) {
 					if (t.media.currentTime >= track.entries.times[i].start && t.media.currentTime <= track.entries.times[i].stop) {
 						// Set the line before the timecode as a class so the cue can be targeted if needed
-						t.captionsText.html(track.entries.text[i]).attr('class', 'mejs-captions-text ' + (track.entries.times[i].identifier || ''));
+						t.captionsText.html(track.entries.text[i]).attr('class', 'th-media-captions-text ' + (track.entries.times[i].identifier || ''));
 						t.captions.show().height(0);
 						return; // exit out if one is visible;
 					}
@@ -484,8 +484,8 @@
 				//}
 
 				t.chapters.append( $(
-					'<div class="mejs-chapter" rel="' + chapters.entries.times[i].start + '" style="left: ' + usedPercent.toString() + '%;width: ' + percent.toString() + '%;">' +
-						'<div class="mejs-chapter-block' + ((i==chapters.entries.times.length-1) ? ' mejs-chapter-block-last' : '') + '">' +
+					'<div class="th-media-chapter" rel="' + chapters.entries.times[i].start + '" style="left: ' + usedPercent.toString() + '%;width: ' + percent.toString() + '%;">' +
+						'<div class="th-media-chapter-block' + ((i==chapters.entries.times.length-1) ? ' th-media-chapter-block-last' : '') + '">' +
 							'<span class="ch-title">' + chapters.entries.text[i] + '</span>' +
 							'<span class="ch-time">' + mejs.Utility.secondsToTimeCode(chapters.entries.times[i].start, t.options) + '&ndash;' + mejs.Utility.secondsToTimeCode(chapters.entries.times[i].stop, t.options) + '</span>' +
 						'</div>' +
@@ -493,7 +493,7 @@
 				usedPercent += percent;
 			}
 
-			t.chapters.find('div.mejs-chapter').click(function() {
+			t.chapters.find('div.th-media-chapter').click(function() {
 				t.media.setCurrentTime( parseFloat( $(this).attr('rel') ) );
 				if (t.media.paused) {
 					t.media.play();

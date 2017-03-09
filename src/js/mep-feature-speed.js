@@ -8,7 +8,7 @@
 		speeds: ['2.00', '1.50', '1.25', '1.00', '0.75'],
 
 		defaultSpeed: '1.00',
-		
+
 		speedChar: 'x'
 
 	});
@@ -19,7 +19,7 @@
 			var t = this;
 
 			if (t.media.pluginType == 'native') {
-				var 
+				var
 					speedButton = null,
 					speedSelector = null,
 					playbackSpeed = null,
@@ -65,28 +65,28 @@
 					}
 				};
 
-				var html = '<div class="mejs-button mejs-speed-button">' +
+				var html = '<div class="th-media-button th-media-speed-button">' +
 							'<button type="button">' + getSpeedNameFromValue(t.options.defaultSpeed) + '</button>' +
-							'<div class="mejs-speed-selector">' +
+							'<div class="th-media-speed-selector">' +
 							'<ul>';
 
 				for (i = 0, il = speeds.length; i<il; i++) {
 					inputId = t.id + '-speed-' + speeds[i].value;
-					html += '<li>' + 
-								'<input type="radio" name="speed" ' + 
+					html += '<li>' +
+								'<input type="radio" name="speed" ' +
 											'value="' + speeds[i].value + '" ' +
 											'id="' + inputId + '" ' +
 											(speeds[i].value === t.options.defaultSpeed ? ' checked' : '') +
 											' />' +
 								'<label for="' + inputId + '" ' +
-											(speeds[i].value === t.options.defaultSpeed ? ' class="mejs-speed-selected"' : '') +
+											(speeds[i].value === t.options.defaultSpeed ? ' class="th-media-speed-selected"' : '') +
 											'>' + speeds[i].name + '</label>' +
 							'</li>';
 				}
 				html += '</ul></div></div>';
 
 				speedButton = $(html).appendTo(controls);
-				speedSelector = speedButton.find('.mejs-speed-selector');
+				speedSelector = speedButton.find('.th-media-speed-selector');
 
 				playbackSpeed = t.options.defaultSpeed;
 
@@ -102,15 +102,15 @@
 						playbackSpeed = newSpeed;
 						media.playbackRate = parseFloat(newSpeed);
 						speedButton.find('button').html(getSpeedNameFromValue(newSpeed));
-						speedButton.find('.mejs-speed-selected').removeClass('mejs-speed-selected');
-						speedButton.find('input[type="radio"]:checked').next().addClass('mejs-speed-selected');
+						speedButton.find('.th-media-speed-selected').removeClass('th-media-speed-selected');
+						speedButton.find('input[type="radio"]:checked').next().addClass('th-media-speed-selected');
 					});
 				speedButton
 					.one( 'mouseenter focusin', function() {
 						speedSelector
 							.height(
-								speedButton.find('.mejs-speed-selector ul').outerHeight(true) +
-								speedButton.find('.mejs-speed-translations').outerHeight(true))
+								speedButton.find('.th-media-speed-selector ul').outerHeight(true) +
+								speedButton.find('.th-media-speed-translations').outerHeight(true))
 							.css('top', (-1 * speedSelector.height()) + 'px');
 					});
 			}

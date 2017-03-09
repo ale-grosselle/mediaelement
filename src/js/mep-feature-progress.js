@@ -18,31 +18,31 @@
 				startedPaused = false,
 				autoRewindInitial = player.options.autoRewind,
 				progressTitle = t.options.progressHelpText ? t.options.progressHelpText : mejs.i18n.t('mejs.time-help-text'),
-				tooltip = player.options.enableProgressTooltip ? '<span class="mejs-time-float">' +
-					'<span class="mejs-time-float-current">00:00</span>' +
-					'<span class="mejs-time-float-corner"></span>' +
+				tooltip = player.options.enableProgressTooltip ? '<span class="th-media-time-float">' +
+					'<span class="th-media-time-float-current">00:00</span>' +
+					'<span class="th-media-time-float-corner"></span>' +
 				'</span>' : "";
 
-			$('<div class="mejs-time-rail">' +
-				'<span  class="mejs-time-total mejs-time-slider">' +
-				//'<span class="mejs-offscreen">' + progressTitle + '</span>' +
-					'<span class="mejs-time-buffering"></span>' +
-					'<span class="mejs-time-loaded"></span>' +
-					'<span class="mejs-time-current"></span>' +
-					'<span class="mejs-time-handle"></span>' +
+			$('<div class="th-media-time-rail">' +
+				'<span  class="th-media-time-total th-media-time-slider">' +
+				//'<span class="th-media-offscreen">' + progressTitle + '</span>' +
+					'<span class="th-media-time-buffering"></span>' +
+					'<span class="th-media-time-loaded"></span>' +
+					'<span class="th-media-time-current"></span>' +
+					'<span class="th-media-time-handle"></span>' +
 					 tooltip +
 				'</span>' +
 			'</div>')
 				.appendTo(controls);
-			controls.find('.mejs-time-buffering').hide();
+			controls.find('.th-media-time-buffering').hide();
 
-			t.total = controls.find('.mejs-time-total');
-			t.loaded  = controls.find('.mejs-time-loaded');
-			t.current  = controls.find('.mejs-time-current');
-			t.handle  = controls.find('.mejs-time-handle');
-			t.timefloat  = controls.find('.mejs-time-float');
-			t.timefloatcurrent  = controls.find('.mejs-time-float-current');
-			t.slider = controls.find('.mejs-time-slider');
+			t.total = controls.find('.th-media-time-total');
+			t.loaded  = controls.find('.th-media-time-loaded');
+			t.current  = controls.find('.th-media-time-current');
+			t.handle  = controls.find('.th-media-time-handle');
+			t.timefloat  = controls.find('.th-media-time-float');
+			t.timefloatcurrent  = controls.find('.th-media-time-float-current');
+			t.slider = controls.find('.th-media-time-slider');
 
 			var handleMouseMove = function (e) {
 
@@ -174,7 +174,7 @@
 
 
 			// handle clicks
-			//controls.find('.mejs-time-rail').delegate('span', 'click', handleMouseMove);
+			//controls.find('.th-media-time-rail').delegate('span', 'click', handleMouseMove);
 			t.total
 				.bind('mousedown touchstart', function (e) {
 					// only handle left clicks or touch
@@ -241,7 +241,7 @@
 			if (target && target.buffered && target.buffered.length > 0 && target.buffered.end && target.duration) {
 				// account for a real array with multiple values - always read the end of the last buffer
 				percent = target.buffered.end(target.buffered.length - 1) / target.duration;
-			} 
+			}
 			// Some browsers (e.g., FF3.6 and Safari 5) cannot calculate target.bufferered.end()
 			// to be anything other than 0. If the byte count is available we use this instead.
 			// Browsers that support the else if do not seem to have the bufferedBytes value and
@@ -266,12 +266,12 @@
 		setCurrentRail: function() {
 
 			var t = this;
-		
+
 			if (t.media.currentTime !== undefined && t.media.duration) {
 
 				// update bar and handle
 				if (t.total && t.handle) {
-					var 
+					var
 						newWidth = Math.round(t.total.width() * t.media.currentTime / t.media.duration),
 						handlePos = newWidth - Math.round(t.handle.outerWidth(true) / 2);
 

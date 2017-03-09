@@ -17,14 +17,14 @@
 
 			if (typeof postrollLink !== 'undefined') {
 				player.postroll =
-					$('<div class="mejs-postroll-layer mejs-layer"><a class="mejs-postroll-close" onclick="$(this).parent().hide();return false;">' + postrollTitle + '</a><div class="mejs-postroll-layer-content"></div></div>').prependTo(layers).hide();
+					$('<div class="th-media-postroll-layer th-media-layer"><a class="th-media-postroll-close" onclick="$(this).parent().hide();return false;">' + postrollTitle + '</a><div class="th-media-postroll-layer-content"></div></div>').prependTo(layers).hide();
 
 				t.media.addEventListener('ended', function (e) {
 					$.ajax({
 						dataType: 'html',
 						url: postrollLink,
 						success: function (data, textStatus) {
-							layers.find('.mejs-postroll-layer-content').html(data);
+							layers.find('.th-media-postroll-layer-content').html(data);
 						}
 					});
 					player.postroll.show();

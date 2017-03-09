@@ -13,70 +13,70 @@
 		isNativeFullScreen: false,
 
 		isInIframe: false,
-							
+
 		// Possible modes
 		// (1) 'native-native' 	HTML5 video  + browser fullscreen (IE10+, etc.)
 		// (2) 'plugin-native' 	plugin video + browser fullscreen (fails in some versions of Firefox)
 		// (3) 'fullwindow' 	Full window (retains all UI)
 		// usePluginFullScreen = true
 		// (4) 'plugin-click' 	Flash 1 - click through with pointer events
-		// (5) 'plugin-hover' 	Flash 2 - hover popup in flash (IE6-8)		
+		// (5) 'plugin-hover' 	Flash 2 - hover popup in flash (IE6-8)
 		fullscreenMode: '',
 
 		buildfullscreen: function(player, controls, layers, media) {
 
 			if (!player.isVideo)
 				return;
-				
-			player.isInIframe = (window.location != window.parent.location);	
-		
+
+			player.isInIframe = (window.location != window.parent.location);
+
 			// detect on start
 			media.addEventListener('loadstart', function() { player.detectFullscreenMode(); });
-				
+
 			// build button
 			var t = this,
 				hideTimeout = null,
 				fullscreenTitle = t.options.fullscreenText ? t.options.fullscreenText : mejs.i18n.t('mejs.fullscreen'),
 				fullscreenBtn =
-					$('<div class="mejs-button mejs-fullscreen-button">' +
+					$('<div class="th-media-button th-media-fullscreen-button">' +
 						'<button type="button" aria-controls="' + t.id + '" title="' + fullscreenTitle + '" aria-label="' + fullscreenTitle + '"></button>' +
 					'</div>')
 					.appendTo(controls)
 					.on('click', function() {
-						
+
 						// toggle fullscreen
 						var isFullScreen = (mejs.MediaFeatures.hasTrueNativeFullScreen && mejs.MediaFeatures.isFullScreen()) || player.isFullScreen;
-	
+
 						if (isFullScreen) {
 							player.exitFullScreen();
 						} else {
 							player.enterFullScreen();
 						}
-					})										
+					})
 					.on('mouseover', function() {
-						
+
 						// very old browsers with a plugin
-						if (t.fullscreenMode == 'plugin-hover') {						
+						if (t.fullscreenMode == 'plugin-hover') {
 							if (hideTimeout !== null) {
 								clearTimeout(hideTimeout);
 								delete hideTimeout;
 							}
-	
+
 							var buttonPos = fullscreenBtn.offset(),
 								containerPos = player.container.offset();
-	
+
 							media.positionFullscreenButton(buttonPos.left - containerPos.left, buttonPos.top - containerPos.top, true);
 						}
 
 					})
 					.on('mouseout', function() {
 
-						if (t.fullscreenMode == 'plugin-hover') {						
+						if (t.fullscreenMode == 'plugin-hover') {
 							if (hideTimeout !== null) {
 								clearTimeout(hideTimeout);
 								delete hideTimeout;
 							}
-	
+
 							hideTimeout = setTimeout(function() {
 								media.hideFullscreenButton();
 							}, 1500);
@@ -84,7 +84,7 @@
 
 					});
 
-					
+
 
 			player.fullscreenBtn = fullscreenBtn;
 
@@ -93,10 +93,10 @@
 					player.exitFullScreen();
 				}
 			});
-			
+
 			t.normalHeight = 0;
-			t.normalWidth = 0;					
-					
+			t.normalWidth = 0;
+
 			// setup native fullscreen event
 			if (mejs.MediaFeatures.hasTrueNativeFullScreen) {
 
@@ -120,45 +120,45 @@
 			}
 
 		},
-		
+
 		detectFullscreenMode: function() {
-			
+
 			var t = this,
 				mode = '',
 				features = mejs.MediaFeatures;
-			
+
 			if (features.hasTrueNativeFullScreen && t.media.pluginType === 'native') {
 				mode = 'native-native';
 			} else if (features.hasTrueNativeFullScreen && t.media.pluginType !== 'native' && !features.hasFirefoxPluginMovingProblem) {
-				mode = 'plugin-native';					
-			} else if (t.usePluginFullScreen) { 
+				mode = 'plugin-native';
+			} else if (t.usePluginFullScreen) {
 				if (mejs.MediaFeatures.supportsPointerEvents) {
 					mode = 'plugin-click';
 					// this needs some special setup
-					t.createPluginClickThrough();				
-				} else { 
+					t.createPluginClickThrough();
+				} else {
 					mode = 'plugin-hover';
 				}
-				
+
 			} else {
 				mode = 'fullwindow';
 			}
-			
-			
-			t.fullscreenMode = mode;		
+
+
+			t.fullscreenMode = mode;
 			return mode;
 		},
-		
+
 		isPluginClickThroughCreated: false,
-		
+
 		createPluginClickThrough: function() {
-				
+
 			var t = this;
-			
+
 			// don't build twice
 			if (t.isPluginClickThroughCreated) {
 				return;
-			}	
+			}
 
 			// allows clicking through the fullscreen button and controls down directly to Flash
 
@@ -232,7 +232,7 @@
 			});
 
 			for (i = 0, len = hoverDivNames.length; i < len; i++) {
-				hoverDivs[hoverDivNames[i]] = $('<div class="mejs-fullscreen-hover" />').appendTo(t.container).mouseover(restoreControls).hide();
+				hoverDivs[hoverDivNames[i]] = $('<div class="th-media-fullscreen-hover" />').appendTo(t.container).mouseover(restoreControls).hide();
 			}
 
 			// on hover, kill the fullscreen button's HTML handling, allowing clicks down to Flash
@@ -304,7 +304,7 @@
 
 
 			t.isPluginClickThroughCreated = true;
-		},		
+		},
 
 		cleanfullscreen: function(player) {
 			player.exitFullScreen();
@@ -322,7 +322,7 @@
 			}
 
 			// set it to not show scroll bars so 100% will work
-            $(document.documentElement).addClass('mejs-fullscreen');
+            $(document.documentElement).addClass('th-media-fullscreen');
 
 			// store sizing
 			t.normalHeight = t.container.height();
@@ -357,18 +357,18 @@
 								setTimeout(checkFullscreen, 500);
 							}
 						}
-						
+
 					}, 1000);
 				}
-				
-			} else if (t.fullscreeMode == 'fullwindow') {				
+
+			} else if (t.fullscreeMode == 'fullwindow') {
 				// move into position
-				
-			}			
-			
+
+			}
+
 			// make full size
 			t.container
-				.addClass('mejs-container-fullscreen')
+				.addClass('th-media-container-fullscreen')
 				.width('100%')
 				.height('100%');
 				//.css({position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, overflow: 'hidden', width: '100%', height: '100%', 'z-index': 1000});
@@ -387,16 +387,16 @@
 					.width('100%')
 					.height('100%');
 			} else {
-				t.container.find('.mejs-shim')
+				t.container.find('.th-media-shim')
 					.width('100%')
-					.height('100%');	
-				
+					.height('100%');
+
 				setTimeout(function() {
 					var win = $(window),
 						winW = win.width(),
 						winH = win.height();
-							
-					t.media.setVideoSize(winW,winH);			
+
+					t.media.setVideoSize(winW,winH);
 				}, 500);
 			}
 
@@ -406,17 +406,17 @@
 
 			if (t.fullscreenBtn) {
 				t.fullscreenBtn
-					.removeClass('mejs-fullscreen')
-					.addClass('mejs-unfullscreen');
+					.removeClass('th-media-fullscreen')
+					.addClass('th-media-unfullscreen');
 			}
 
 			t.setControlsSize();
 			t.isFullScreen = true;
 
 			var zoomFactor = Math.min(screen.width / t.width, screen.height / t.height);
-			t.container.find('.mejs-captions-text').css('font-size', zoomFactor * 100 + '%');
-			t.container.find('.mejs-captions-text').css('line-height', 'normal');
-			t.container.find('.mejs-captions-position').css('bottom', '45px');
+			t.container.find('.th-media-captions-text').css('font-size', zoomFactor * 100 + '%');
+			t.container.find('.th-media-captions-text').css('line-height', 'normal');
+			t.container.find('.th-media-captions-position').css('bottom', '45px');
 
 			t.container.trigger('enteredfullscreen');
 		},
@@ -443,10 +443,10 @@
 			}
 
 			// restore scroll bars to document
-            $(document.documentElement).removeClass('mejs-fullscreen');
+            $(document.documentElement).removeClass('th-media-fullscreen');
 
 			t.container
-				.removeClass('mejs-container-fullscreen')
+				.removeClass('th-media-container-fullscreen')
 				.width(t.normalWidth)
 				.height(t.normalHeight);
 
@@ -455,7 +455,7 @@
 					.width(t.normalWidth)
 					.height(t.normalHeight);
 			} else {
-				t.container.find('.mejs-shim')
+				t.container.find('.th-media-shim')
 					.width(t.normalWidth)
 					.height(t.normalHeight);
 
@@ -467,15 +467,15 @@
 				.height(t.normalHeight);
 
 			t.fullscreenBtn
-				.removeClass('mejs-unfullscreen')
-				.addClass('mejs-fullscreen');
+				.removeClass('th-media-unfullscreen')
+				.addClass('th-media-fullscreen');
 
 			t.setControlsSize();
 			t.isFullScreen = false;
 
-			t.container.find('.mejs-captions-text').css('font-size','');
-			t.container.find('.mejs-captions-text').css('line-height', '');
-			t.container.find('.mejs-captions-position').css('bottom', '');
+			t.container.find('.th-media-captions-text').css('font-size','');
+			t.container.find('.th-media-captions-text').css('line-height', '');
+			t.container.find('.th-media-captions-position').css('bottom', '');
 
 			t.container.trigger('exitedfullscreen');
 		}

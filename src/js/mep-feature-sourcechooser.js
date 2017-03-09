@@ -15,9 +15,9 @@
 			;
 
 			player.sourcechooserButton =
-				$('<div class="mejs-button mejs-sourcechooser-button">'+
+				$('<div class="th-media-button th-media-sourcechooser-button">'+
 						'<button type="button" role="button" aria-haspopup="true" aria-owns="' + t.id + '" title="' + sourceTitle + '" aria-label="' + sourceTitle + '"></button>'+
-						'<div class="mejs-sourcechooser-selector mejs-offscreen" role="menu" aria-expanded="false" aria-hidden="true">'+
+						'<div class="th-media-sourcechooser-selector th-media-offscreen" role="menu" aria-expanded="false" aria-hidden="true">'+
 							'<ul>'+
 							'</ul>'+
 						'</div>'+
@@ -44,12 +44,12 @@
 								if (!mejs.MediaFeatures.isFirefox) { // space sends the click event in Firefox
 									player.showSourcechooserSelector();
 								}
-								$(this).find('.mejs-sourcechooser-selector')
+								$(this).find('.th-media-sourcechooser-selector')
 									.find('input[type=radio]:checked').first().focus();
 								break;
 							case 13: // enter
 								player.showSourcechooserSelector();
-								$(this).find('.mejs-sourcechooser-selector')
+								$(this).find('.th-media-sourcechooser-selector')
 									.find('input[type=radio]:checked').first().focus();
 								break;
 							case 27: // esc
@@ -66,7 +66,7 @@
 						// Firefox does NOT support e.relatedTarget to see which element
 						// just lost focus, so wait to find the next focused element
 						setTimeout(function () {
-							var parent = $(document.activeElement).closest('.mejs-sourcechooser-selector');
+							var parent = $(document.activeElement).closest('.th-media-sourcechooser-selector');
 							if (!parent.length) {
 								// focus is outside the control; close menu
 								player.hideSourcechooserSelector();
@@ -78,7 +78,7 @@
 					.delegate('input[type=radio]', 'click', function() {
 						// set aria states
 						$(this).attr('aria-selected', true).attr('checked', 'checked');
-						$(this).closest('.mejs-sourcechooser-selector').find('input[type=radio]').not(this).attr('aria-selected', 'false').removeAttr('checked');
+						$(this).closest('.th-media-sourcechooser-selector').find('input[type=radio]').not(this).attr('aria-selected', 'false').removeAttr('checked');
 
 						var src = this.value;
 
@@ -105,9 +105,9 @@
 
 					// Handle click so that screen readers can toggle the menu
 					.delegate('button', 'click', function (e) {
-						if ($(this).siblings('.mejs-sourcechooser-selector').hasClass('mejs-offscreen')) {
+						if ($(this).siblings('.th-media-sourcechooser-selector').hasClass('th-media-offscreen')) {
 							player.showSourcechooserSelector();
-							$(this).siblings('.mejs-sourcechooser-selector').find('input[type=radio]:checked').first().focus();
+							$(this).siblings('.th-media-sourcechooser-selector').find('input[type=radio]:checked').first().focus();
 						} else {
 							player.hideSourcechooserSelector();
 						}
@@ -143,14 +143,14 @@
 		adjustSourcechooserBox: function() {
 			var t = this;
 			// adjust the size of the outer box
-			t.sourcechooserButton.find('.mejs-sourcechooser-selector').height(
-				t.sourcechooserButton.find('.mejs-sourcechooser-selector ul').outerHeight(true)
+			t.sourcechooserButton.find('.th-media-sourcechooser-selector').height(
+				t.sourcechooserButton.find('.th-media-sourcechooser-selector ul').outerHeight(true)
 			);
 		},
 
 		hideSourcechooserSelector: function () {
-			this.sourcechooserButton.find('.mejs-sourcechooser-selector')
-				.addClass('mejs-offscreen')
+			this.sourcechooserButton.find('.th-media-sourcechooser-selector')
+				.addClass('th-media-offscreen')
 				.attr('aria-expanded', 'false')
 				.attr('aria-hidden', 'true')
 				.find('input[type=radio]') // make radios not fucusable
@@ -158,8 +158,8 @@
 		},
 
 		showSourcechooserSelector: function () {
-			this.sourcechooserButton.find('.mejs-sourcechooser-selector')
-				.removeClass('mejs-offscreen')
+			this.sourcechooserButton.find('.th-media-sourcechooser-selector')
+				.removeClass('th-media-offscreen')
 				.attr('aria-expanded', 'true')
 				.attr('aria-hidden', 'false')
 				.find('input[type=radio]')
