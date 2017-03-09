@@ -1,4 +1,4 @@
-﻿package htmlelements {
+﻿﻿package htmlelements {
 import flash.external.ExternalInterface;
 	import flash.display.Sprite;
 	import flash.media.Video;
