@@ -360,7 +360,7 @@ if (typeof jQuery != 'undefined') {
 						'<div class="th-media-inner">'+
 							'<div class="th-media-mediaelement"></div>'+
 							'<div class="th-media-layers"></div>'+
-							'<div class="th-media-controls"></div>'+
+							//'<div class="th-media-controls"></div>'+
 							'<div class="th-media-clear"></div>'+
 						'</div>' +
 					'</div>')
@@ -377,9 +377,9 @@ if (typeof jQuery != 'undefined') {
 								// else send focus to last control button.
 								var btnSelector = '.th-media-playpause-button > button';
 
-								if (mejs.Utility.isNodeAfter(e.relatedTarget, t.container[0])) {
+								/*if (mejs.Utility.isNodeAfter(e.relatedTarget, t.container[0])) {
 									btnSelector = '.th-media-controls .th-media-button:last-child > button';
-								}
+								}*/
 
 								var button = t.container.find(btnSelector);
 								button.focus();
@@ -388,9 +388,9 @@ if (typeof jQuery != 'undefined') {
 					});
 
 				// When no elements in controls, hide bar completely
-				if (!t.options.features.length) {
+				/*if (!t.options.features.length) {
 					t.container.css('background', 'transparent').find('.th-media-controls').hide();
-				}
+				}*/
 
 				if (t.isVideo && t.options.stretching === 'fill' && !t.container.parent('th-media-fill-container').length) {
 					// outer container
@@ -415,7 +415,7 @@ if (typeof jQuery != 'undefined') {
 				t.node.player = t;
 
 				// find parts
-				t.controls = t.container.find('.th-media-controls');
+				/*t.controls = t.container.find('.th-media-controls');*/
 				t.layers = t.container.find('.th-media-layers');
 
 				// determine the size
