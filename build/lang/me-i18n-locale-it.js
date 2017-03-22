@@ -61,7 +61,7 @@
 
             // mep-player
             "mejs.video-player": "Lettore Video",
-            "mejs.audio-player": "Lettore Audio",
+            "mejs.audio-player": "Lettore Audio"
 
             // mep-feature-ads
             //"mejs.ad-skip": "Skip ad",

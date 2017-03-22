@@ -925,26 +925,26 @@ mejs.PluginMediaElement.prototype = {
 };
 
 /*
-Default options
-*/
+ Default options
+ */
 mejs.MediaElementDefaults = {
-	// allows testing on HTML5, flash, silverlight
+	// allows testing on HTML5, flash
 	// auto: attempts to detect what the browser can do
 	// auto_plugin: prefer plugins and then attempt native HTML5
 	// native: forces HTML5 playback
-	// shim: disallows HTML5, will attempt either Flash or Silverlight
+	// shim: disallows HTML5, will attempt either Flash
 	// none: forces fallback view
 	mode: 'auto',
 	// remove or reorder to change plugin priority and availability
-	plugins: ['flash','silverlight','youtube','vimeo'],
+	plugins: ['flash'],
 	// shows debug errors on screen
 	enablePluginDebug: false,
 	// use plugin for browsers that have trouble with Basic Authentication on HTTPS sites
 	httpsBasicAuthSite: false,
 	// overrides the type specified, useful for dynamic instantiation
 	type: '',
-	// path to Flash and Silverlight plugins
-	pluginPath: mejs.Utility.getScriptPath(['mediaelement.js','mediaelement.min.js','mediaelement-and-player.js','mediaelement-and-player.min.js']),
+	// path to Flash plugins
+	pluginPath: mejs.Utility.getScriptPath(['mediaelement.js', 'mediaelement.min.js', 'mediaelement-and-player.js', 'mediaelement-and-player.min.js']),
 	// name of flash file
 	flashName: 'flashmediaelement.swf',
 	// streamer for RTMP streaming
@@ -957,8 +957,6 @@ mejs.MediaElementDefaults = {
 	enablePseudoStreaming: false,
 	// start query parameter sent to server for pseudo-streaming
 	pseudoStreamingStartQueryParam: 'start',
-	// name of silverlight file
-	silverlightName: 'silverlightmediaelement.xap',
 	// default if the <video width> is not specified
 	defaultVideoWidth: 480,
 	// default if the <video height> is not specified
@@ -969,7 +967,7 @@ mejs.MediaElementDefaults = {
 	pluginHeight: -1,
 	// additional plugin variables in 'key=value' form
 	pluginVars: [],
-	// rate in milliseconds for Flash and Silverlight to fire the timeupdate event
+	// rate in milliseconds for Flash to fire the timeupdate event
 	// larger number is less accurate, but less strain on plugin->JavaScript bridge
 	timerRate: 250,
 	// initial volume for player
@@ -977,32 +975,33 @@ mejs.MediaElementDefaults = {
 	// custom error message in case media cannot be played; otherwise, Download File
 	// link will be displayed
 	customError: "",
-	success: function () { },
-	error: function () { }
+	success: function () {
+	},
+	error: function () {
+	}
 };
 
 /*
-Determines if a browser supports the <video> or <audio> element
-and returns either the native element or a Flash/Silverlight version that
-mimics HTML5 MediaElement
-*/
+ Determines if a browser supports the <video> or <audio> element
+ and returns either the native element or a Flash version that
+ mimics HTML5 MediaElement
+ */
 mejs.MediaElement = function (el, o) {
-	return mejs.HtmlMediaElementShim.create(el,o);
+	return mejs.HtmlMediaElementShim.create(el, o);
 };
 
 mejs.HtmlMediaElementShim = {
 
-	create: function(el, o) {
+	create: function (el, o) {
 		var
 			options = {},
 			htmlMediaElement = (typeof(el) == 'string') ? document.getElementById(el) : el,
 			tagName = htmlMediaElement.tagName.toLowerCase(),
-			isMediaTag = (tagName === 'audio' || tagName === 'video'),
-			src = (isMediaTag) ? htmlMediaElement.getAttribute('src') : htmlMediaElement.getAttribute('href'),
+			src = htmlMediaElement.getAttribute('src'),
 			poster = htmlMediaElement.getAttribute('poster'),
-			autoplay =  htmlMediaElement.getAttribute('autoplay'),
-			preload =  htmlMediaElement.getAttribute('preload'),
-			controls =  htmlMediaElement.getAttribute('controls'),
+			autoplay = htmlMediaElement.getAttribute('autoplay'),
+			preload = htmlMediaElement.getAttribute('preload'),
+			controls = htmlMediaElement.getAttribute('controls'),
 			playback,
 			prop;
 
@@ -1016,293 +1015,41 @@ mejs.HtmlMediaElementShim = {
 
 
 		// clean up attributes
-		src = 		(typeof src == 'undefined' 	|| src === null || src == '') ? null : src;
-		poster =	(typeof poster == 'undefined' 	|| poster === null) ? '' : poster;
-		preload = 	(typeof preload == 'undefined' 	|| preload === null || preload === 'false') ? 'none' : preload;
-		autoplay = 	!(typeof autoplay == 'undefined' || autoplay === null || autoplay === 'false');
-		controls = 	!(typeof controls == 'undefined' || controls === null || controls === 'false');
+		src = (typeof src == 'undefined' || src === null || src == '') ? null : src;
+		poster = (typeof poster == 'undefined' || poster === null) ? '' : poster;
+		preload = (typeof preload == 'undefined' || preload === null || preload === 'false') ? 'none' : preload;
+		autoplay = !(typeof autoplay == 'undefined' || autoplay === null || autoplay === 'false');
+		controls = !(typeof controls == 'undefined' || controls === null || controls === 'false');
 
 		// test for HTML5 and plugin capabilities
-		playback = this.determinePlayback(htmlMediaElement, options, mejs.MediaFeatures.supportsMediaTag, isMediaTag, src);
+		playback = this.determinePlayback(htmlMediaElement, src, options.playbackMethod);
 		playback.url = (playback.url !== null) ? mejs.Utility.absolutizeUrl(playback.url) : '';
-        	playback.scheme = mejs.Utility.determineScheme(playback.url);
 
 		if (playback.method == 'native') {
 			// second fix for android
 			if (mejs.MediaFeatures.isBustedAndroid) {
 				htmlMediaElement.src = playback.url;
-				htmlMediaElement.addEventListener('click', function() {
+				htmlMediaElement.addEventListener('click', function () {
 					htmlMediaElement.play();
 				}, false);
 			}
 
 			// add methods to native HTMLMediaElement
 			return this.updateNative(playback, options, autoplay, preload);
-		} else if (playback.method !== '') {
-			// create plugin to mimic HTMLMediaElement
-
-			return this.createPlugin( playback,  options, poster, autoplay, preload, controls);
 		} else {
-			// boo, no HTML5, no Flash, no Silverlight.
-			this.createErrorMessage( playback, options, poster );
-
-			return this;
+			return this.createPlugin(playback, options, poster, autoplay, preload, controls);
 		}
 	},
 
-	determinePlayback: function(htmlMediaElement, options, supportsMediaTag, isMediaTag, src) {
-		var
-			mediaFiles = [],
-			i,
-			j,
-			k,
-			l,
-			n,
-			type,
-			result = { method: '', url: '', htmlMediaElement: htmlMediaElement, isVideo: (htmlMediaElement.tagName.toLowerCase() !== 'audio'), scheme: ''},
-			pluginName,
-			pluginVersions,
-			pluginInfo,
-			dummy,
-			media;
-
-		// STEP 1: Get URL and type from <video src> or <source src>
-
-		// supplied type overrides <video type> and <source type>
-		if (typeof options.type != 'undefined' && options.type !== '') {
-
-			// accept either string or array of types
-			if (typeof options.type == 'string') {
-				mediaFiles.push({type:options.type, url:src});
-			} else {
-
-				for (i=0; i<options.type.length; i++) {
-					mediaFiles.push({type:options.type[i], url:src});
-				}
-			}
-
-		// test for src attribute first
-		} else if (src !== null) {
-			type = this.formatType(src, htmlMediaElement.getAttribute('type'));
-			mediaFiles.push({type:type, url:src});
-
-		// then test for <source> elements
-		} else {
-			// test <source> types to see if they are usable
-			for (i = 0; i < htmlMediaElement.childNodes.length; i++) {
-				n = htmlMediaElement.childNodes[i];
-				if (n.nodeType == 1 && n.tagName.toLowerCase() == 'source') {
-					src = n.getAttribute('src');
-					type = this.formatType(src, n.getAttribute('type'));
-					media = n.getAttribute('media');
-
-					if (!media || !window.matchMedia || (window.matchMedia && window.matchMedia(media).matches)) {
-						mediaFiles.push({type:type, url:src});
-					}
-				}
-			}
-		}
-
-		// in the case of dynamicly created players
-		// check for audio types
-		if (!isMediaTag && mediaFiles.length > 0 && mediaFiles[0].url !== null && this.getTypeFromFile(mediaFiles[0].url).indexOf('audio') > -1) {
-			result.isVideo = false;
-		}
-
-
-		// STEP 2: Test for playback method
-
-		// special case for Android which sadly doesn't implement the canPlayType function (always returns '')
-		if (result.isVideo && mejs.MediaFeatures.isBustedAndroid) {
-			htmlMediaElement.canPlayType = function(type) {
-				return (type.match(/video\/(mp4|m4v)/gi) !== null) ? 'maybe' : '';
-			};
-		}
-
-		// special case for Chromium to specify natively supported video codecs (i.e. WebM and Theora)
-		if (result.isVideo && mejs.MediaFeatures.isChromium) {
-			htmlMediaElement.canPlayType = function(type) {
-				return (type.match(/video\/(webm|ogv|ogg)/gi) !== null) ? 'maybe' : '';
-			};
-		}
-
-		// test for native playback first
-		if (supportsMediaTag && (options.mode === 'auto' || options.mode === 'auto_plugin' || options.mode === 'native')  && !(mejs.MediaFeatures.isBustedNativeHTTPS && options.httpsBasicAuthSite === true)) {
-
-			if (!isMediaTag) {
-
-				// create a real HTML5 Media Element
-				dummy = document.createElement( result.isVideo ? 'video' : 'audio');
-				htmlMediaElement.parentNode.insertBefore(dummy, htmlMediaElement);
-				htmlMediaElement.style.display = 'none';
-
-				// use this one from now on
-				result.htmlMediaElement = htmlMediaElement = dummy;
-			}
-
-			for (i=0; i<mediaFiles.length; i++) {
-				// normal check
-				if (mediaFiles[i].type == "video/m3u8" || htmlMediaElement.canPlayType(mediaFiles[i].type).replace(/no/, '') !== ''
-					// special case for Mac/Safari 5.0.3 which answers '' to canPlayType('audio/mp3') but 'maybe' to canPlayType('audio/mpeg')
-					|| htmlMediaElement.canPlayType(mediaFiles[i].type.replace(/mp3/,'mpeg')).replace(/no/, '') !== ''
-					// special case for m4a supported by detecting mp4 support
-					|| htmlMediaElement.canPlayType(mediaFiles[i].type.replace(/m4a/,'mp4')).replace(/no/, '') !== '') {
-					result.method = 'native';
-					result.url = mediaFiles[i].url;
-					break;
-				}
-			}
-
-			if (result.method === 'native') {
-				if (result.url !== null) {
-					htmlMediaElement.src = result.url;
-				}
-
-				// if `auto_plugin` mode, then cache the native result but try plugins.
-				if (options.mode !== 'auto_plugin') {
-					return result;
-				}
-			}
-		}
-
-		// if native playback didn't work, then test plugins
-		if (options.mode === 'auto' || options.mode === 'auto_plugin' || options.mode === 'shim') {
-			for (i=0; i<mediaFiles.length; i++) {
-				type = mediaFiles[i].type;
-
-				// test all plugins in order of preference [silverlight, flash]
-				for (j=0; j<options.plugins.length; j++) {
-
-					pluginName = options.plugins[j];
-
-					// test version of plugin (for future features)
-					pluginVersions = mejs.plugins[pluginName];
-
-					for (k=0; k<pluginVersions.length; k++) {
-						pluginInfo = pluginVersions[k];
-
-						// test if user has the correct plugin version
-
-						// for youtube/vimeo
-						if (pluginInfo.version == null ||
-
-							mejs.PluginDetector.hasPluginVersion(pluginName, pluginInfo.version)) {
-
-							// test for plugin playback types
-							for (l=0; l<pluginInfo.types.length; l++) {
-								// find plugin that can play the type
-								if (type.toLowerCase() == pluginInfo.types[l].toLowerCase()) {
-									result.method = pluginName;
-									result.url = mediaFiles[i].url;
-									return result;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// at this point, being in 'auto_plugin' mode implies that we tried plugins but failed.
-		// if we have native support then return that.
-		if (options.mode === 'auto_plugin' && result.method === 'native') {
-			return result;
-		}
-
-		// what if there's nothing to play? just grab the first available
-		if (result.method === '' && mediaFiles.length > 0) {
-			result.url = mediaFiles[0].url;
-		}
-
-		return result;
-	},
-
-	formatType: function(url, type) {
-		// if no type is supplied, fake it with the extension
-		if (url && !type) {
-			return this.getTypeFromFile(url);
-		} else {
-			// only return the mime part of the type in case the attribute contains the codec
-			// see http://www.whatwg.org/specs/web-apps/current-work/multipage/video.html#the-source-element
-			// `video/mp4; codecs="avc1.42E01E, mp4a.40.2"` becomes `video/mp4`
-
-			if (type && ~type.indexOf(';')) {
-				return type.substr(0, type.indexOf(';'));
-			} else {
-				return type;
-			}
+	determinePlayback: function(htmlMediaElement, src, method){
+		return {
+			htmlMediaElement: htmlMediaElement,
+			method: 'native',
+			url: src
 		}
 	},
 
-	getTypeFromFile: function(url) {
-		url = url.split('?')[0];
-		var
-			ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase(),
-			av = /(mp4|m4v|ogg|ogv|m3u8|webm|webmv|flv|wmv|mpeg|mov)/gi.test(ext) ? 'video/' : 'audio/';
-		return this.getTypeFromExtension(ext, av);
-	},
-
-	getTypeFromExtension: function(ext, av) {
-		av = av || '';
-
-		switch (ext) {
-			case 'mp4':
-			case 'm4v':
-			case 'm4a':
-			case 'f4v':
-			case 'f4a':
-				return av + 'mp4';
-			case 'flv':
-				return av + 'x-flv';
-			case 'webm':
-			case 'webma':
-			case 'webmv':
-				return av + 'webm';
-			case 'ogg':
-			case 'oga':
-			case 'ogv':
-				return av + 'ogg';
-			case 'm3u8':
-				return 'application/x-mpegurl';
-			case 'ts':
-				return av + 'mp2t';
-			default:
-				return av + ext;
-		}
-	},
-
-	createErrorMessage: function(playback, options, poster) {
-		var
-			htmlMediaElement = playback.htmlMediaElement,
-			errorContainer = document.createElement('div'),
-			errorContent = options.customError;
-
-		errorContainer.className = 'th-me-cannotplay';
-
-		try {
-			errorContainer.style.width = htmlMediaElement.width + 'px';
-			errorContainer.style.height = htmlMediaElement.height + 'px';
-		} catch (e) {}
-
-		if (!errorContent) {
-			errorContent = '<a href="' + playback.url + '">';
-
-			if (poster !== '') {
-				errorContent += '<img src="' + poster + '" width="100%" height="100%" alt="" />';
-			}
-
-			errorContent += '<span>' + mejs.i18n.t('mejs.download-file') + '</span></a>';
-		}
-
-		errorContainer.innerHTML = errorContent;
-
-		htmlMediaElement.parentNode.insertBefore(errorContainer, htmlMediaElement);
-		htmlMediaElement.style.display = 'none';
-
-		options.error(htmlMediaElement);
-	},
-
-	createPlugin:function(playback, options, poster, autoplay, preload, controls) {
+	createPlugin: function (playback, options, poster, autoplay, preload, controls) {
 		var
 			htmlMediaElement = playback.htmlMediaElement,
 			width = 1,
@@ -1329,7 +1076,7 @@ mejs.HtmlMediaElementShim = {
 		node = htmlMediaElement.parentNode;
 
 		while (node !== null && node.tagName != null && node.tagName.toLowerCase() !== 'body' &&
-				node.parentNode != null && node.parentNode.tagName != null && node.parentNode.constructor != null && node.parentNode.constructor.name === "ShadowRoot") {
+		node.parentNode != null && node.parentNode.tagName != null && node.parentNode.constructor != null && node.parentNode.constructor.name === "ShadowRoot") {
 			if (node.parentNode.tagName.toLowerCase() === 'p') {
 				node.parentNode.parentNode.insertBefore(node, node.parentNode);
 				break;
@@ -1337,20 +1084,13 @@ mejs.HtmlMediaElementShim = {
 			node = node.parentNode;
 		}
 
-		if (playback.isVideo) {
-			width = (options.pluginWidth > 0) ? options.pluginWidth : (options.videoWidth > 0) ? options.videoWidth : (htmlMediaElement.getAttribute('width') !== null) ? htmlMediaElement.getAttribute('width') : options.defaultVideoWidth;
-			height = (options.pluginHeight > 0) ? options.pluginHeight : (options.videoHeight > 0) ? options.videoHeight : (htmlMediaElement.getAttribute('height') !== null) ? htmlMediaElement.getAttribute('height') : options.defaultVideoHeight;
+		width = (options.pluginWidth > 0) ? options.pluginWidth : (options.videoWidth > 0) ? options.videoWidth : (htmlMediaElement.getAttribute('width') !== null) ? htmlMediaElement.getAttribute('width') : options.defaultVideoWidth;
+		height = (options.pluginHeight > 0) ? options.pluginHeight : (options.videoHeight > 0) ? options.videoHeight : (htmlMediaElement.getAttribute('height') !== null) ? htmlMediaElement.getAttribute('height') : options.defaultVideoHeight;
 
-			// in case of '%' make sure it's encoded
-			width = mejs.Utility.encodeUrl(width);
-			height = mejs.Utility.encodeUrl(height);
+		// in case of '%' make sure it's encoded
+		width = mejs.Utility.encodeUrl(width);
+		height = mejs.Utility.encodeUrl(height);
 
-		} else {
-			if (options.enablePluginDebug) {
-				width = 320;
-				height = 240;
-			}
-		}
 
 		// register plugin
 		pluginMediaElement.success = options.success;
@@ -1359,14 +1099,9 @@ mejs.HtmlMediaElementShim = {
 		container.className = 'th-me-plugin';
 		container.id = pluginid + '_container';
 
-		if (playback.isVideo) {
-				htmlMediaElement.parentNode.insertBefore(container, htmlMediaElement);
-		} else {
-				document.body.insertBefore(container, document.body.childNodes[0]);
-		}
+		htmlMediaElement.parentNode.insertBefore(container, htmlMediaElement);
 
-		if (playback.method === 'flash' || playback.method === 'silverlight') {
-
+		if (playback.method === 'flash') {
 			var canPlayVideo = htmlMediaElement.getAttribute('type') === 'audio/mp4',
 				childrenSources = htmlMediaElement.getElementsByTagName('source');
 
@@ -1378,10 +1113,10 @@ mejs.HtmlMediaElementShim = {
 				}
 			}
 
-			// flash/silverlight vars
+			// flash vars
 			initVars = [
 				'id=' + pluginid,
-				'isvideo=' + ((playback.isVideo || canPlayVideo) ? "true" : "false"),
+				'isvideo=' + "true",
 				'autoplay=' + ((autoplay) ? "true" : "false"),
 				'preload=' + preload,
 				'width=' + width,
@@ -1415,14 +1150,10 @@ mejs.HtmlMediaElementShim = {
 			}
 
 			// call from plugin
-			window[pluginid + '_init'] = function() {
+			window[pluginid + '_init'] = function () {
 				switch (pluginMediaElement.pluginType) {
 					case 'flash':
 						pluginMediaElement.pluginElement = pluginMediaElement.pluginApi = document.getElementById(pluginid);
-						break;
-					case 'silverlight':
-						pluginMediaElement.pluginElement = document.getElementById(pluginMediaElement.id);
-						pluginMediaElement.pluginApi = pluginMediaElement.pluginElement.Content.MediaElementJS;
 						break;
 				}
 
@@ -1432,7 +1163,7 @@ mejs.HtmlMediaElementShim = {
 			};
 
 			// event call from plugin
-			window[pluginid + '_event'] = function(eventName, values) {
+			window[pluginid + '_event'] = function (eventName, values) {
 
 				var
 					e,
@@ -1455,7 +1186,7 @@ mejs.HtmlMediaElementShim = {
 				bufferedTime = values.bufferedTime || 0;
 
 				e.target.buffered = e.buffered = {
-					start: function(index) {
+					start: function (index) {
 						return 0;
 					},
 					end: function (index) {
@@ -1471,186 +1202,39 @@ mejs.HtmlMediaElementShim = {
 		}
 
 		switch (playback.method) {
-			case 'silverlight':
-				container.innerHTML =
-'<object data="data:application/x-silverlight-2," type="application/x-silverlight-2" id="' + pluginid + '" name="' + pluginid + '" width="' + width + '" height="' + height + '" class="th-media-shim">' +
-'<param name="initParams" value="' + initVars.join(',') + '" />' +
-'<param name="windowless" value="true" />' +
-'<param name="background" value="black" />' +
-'<param name="minRuntimeVersion" value="3.0.0.0" />' +
-'<param name="autoUpgrade" value="true" />' +
-'<param name="source" value="' + options.pluginPath + options.silverlightName + '" />' +
-'</object>';
-					break;
-
 			case 'flash':
-
 				if (mejs.MediaFeatures.isIE) {
 					specialIEContainer = document.createElement('div');
 					container.appendChild(specialIEContainer);
 					specialIEContainer.outerHTML =
-'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" ' +
-'id="' + pluginid + '" width="' + width + '" height="' + height + '" class="th-media-shim">' +
-'<param name="movie" value="' + options.pluginPath + options.flashName + '?' + (new Date().getTime()) + '" />' +
-'<param name="flashvars" value="' + initVars.join('&amp;') + '" />' +
-'<param name="quality" value="high" />' +
-'<param name="bgcolor" value="#000000" />' +
-'<param name="wmode" value="transparent" />' +
-'<param name="allowScriptAccess" value="' + options.flashScriptAccess + '" />' +
-'<param name="allowFullScreen" value="true" />' +
-'<param name="scale" value="default" />' +
-'</object>';
-
+						'<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" ' +
+						'id="' + pluginid + '" width="' + width + '" height="' + height + '" class="th-media-shim">' +
+						'<param name="movie" value="' + options.pluginPath + options.flashName + '?' + (new Date().getTime()) + '" />' +
+						'<param name="flashvars" value="' + initVars.join('&amp;') + '" />' +
+						'<param name="quality" value="high" />' +
+						'<param name="bgcolor" value="#000000" />' +
+						'<param name="wmode" value="transparent" />' +
+						'<param name="allowScriptAccess" value="' + options.flashScriptAccess + '" />' +
+						'<param name="allowFullScreen" value="true" />' +
+						'<param name="scale" value="default" />' +
+						'</object>';
 				} else {
-
 					container.innerHTML =
-'<embed id="' + pluginid + '" name="' + pluginid + '" ' +
-'play="true" ' +
-'loop="false" ' +
-'quality="high" ' +
-'bgcolor="#000000" ' +
-'wmode="transparent" ' +
-'allowScriptAccess="' + options.flashScriptAccess + '" ' +
-'allowFullScreen="true" ' +
-'type="application/x-shockwave-flash" pluginspage="//www.macromedia.com/go/getflashplayer" ' +
-'src="' + options.pluginPath + options.flashName + '" ' +
-'flashvars="' + initVars.join('&') + '" ' +
-'width="' + width + '" ' +
-'height="' + height + '" ' +
-'scale="default"' +
-'class="th-media-shim"></embed>';
-				}
-				break;
-
-			case 'youtube':
-
-
-				var videoId;
-				// youtu.be url from share button
-				if (playback.url.lastIndexOf("youtu.be") != -1) {
-					videoId = playback.url.substr(playback.url.lastIndexOf('/')+1);
-					if (videoId.indexOf('?') != -1) {
-						videoId = videoId.substr(0, videoId.indexOf('?'));
-					}
-				}
-				else {
-					// https://www.youtube.com/watch?v=
-					var videoIdMatch = playback.url.match( /[?&]v=([^&#]+)|&|#|$/ );
-					if ( videoIdMatch ) {
-						videoId = videoIdMatch[1];
-					}
-				}
-				youtubeSettings = {
-						container: container,
-						containerId: container.id,
-						pluginMediaElement: pluginMediaElement,
-						pluginId: pluginid,
-						videoId: videoId,
-						height: height,
-						width: width,
-                        scheme: playback.scheme,
-						variables: options.youtubeIframeVars
-					};
-
-				// favor iframe version of YouTube
-				if (window.postMessage) {
-					mejs.YouTubeApi.enqueueIframe(youtubeSettings);
-				} else if (mejs.PluginDetector.hasPluginVersion('flash', [10,0,0]) ) {
-					mejs.YouTubeApi.createFlash(youtubeSettings, options);
-				}
-				break;
-
-			// DEMO Code. Does NOT work.
-			case 'vimeo':
-				var player_id = pluginid + "_player";
-				pluginMediaElement.vimeoid = playback.url.substr(playback.url.lastIndexOf('/')+1);
-
-				container.innerHTML ='<iframe src="' + playback.scheme + 'player.vimeo.com/video/' + pluginMediaElement.vimeoid + '?api=1&portrait=0&byline=0&title=0&player_id=' + player_id + '" width="' + width +'" height="' + height +'" frameborder="0" class="th-media-shim" id="' + player_id + '" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
-				if (typeof($f) == 'function') { // froogaloop available
-					var player = $f(container.childNodes[0]),
-						playerState = -1;
-
-					player.addEvent('ready', function() {
-
-						player.playVideo = function() {
-							player.api( 'play' );
-						};
-						player.stopVideo = function() {
-							player.api( 'unload' );
-						};
-						player.pauseVideo = function() {
-							player.api( 'pause' );
-						};
-						player.seekTo = function( seconds ) {
-							player.api( 'seekTo', seconds );
-						};
-						player.setVolume = function( volume ) {
-							player.api( 'setVolume', volume );
-						};
-						player.setMuted = function( muted ) {
-							if( muted ) {
-								player.lastVolume = player.api( 'getVolume' );
-								player.api( 'setVolume', 0 );
-							} else {
-								player.api( 'setVolume', player.lastVolume );
-								delete player.lastVolume;
-							}
-						};
-						// parity with YT player
-						player.getPlayerState = function() {
-							return playerState;
-						};
-
-						function createEvent(player, pluginMediaElement, eventName, e) {
-							var event = {
-								type: eventName,
-								target: pluginMediaElement
-							};
-							if (eventName == 'timeupdate') {
-								pluginMediaElement.currentTime = event.currentTime = e.seconds;
-								pluginMediaElement.duration = event.duration = e.duration;
-							}
-							pluginMediaElement.dispatchEvent(event);
-						}
-
-						player.addEvent('play', function() {
-							playerState = 1;
-							createEvent(player, pluginMediaElement, 'play');
-							createEvent(player, pluginMediaElement, 'playing');
-						});
-
-						player.addEvent('pause', function() {
-							playerState = 2;
-							createEvent(player, pluginMediaElement, 'pause');
-						});
-
-						player.addEvent('finish', function() {
-							playerState = 0;
-							createEvent(player, pluginMediaElement, 'ended');
-						});
-
-						player.addEvent('playProgress', function(e) {
-							createEvent(player, pluginMediaElement, 'timeupdate', e);
-						});
-
-						player.addEvent('seek', function(e) {
-							playerState = 3;
-							createEvent(player, pluginMediaElement, 'seeked', e);
-						});
-
-						player.addEvent('loadProgress', function(e) {
-							playerState = 3;
-							createEvent(player, pluginMediaElement, 'progress', e);
-						});
-
-						pluginMediaElement.pluginElement = container;
-						pluginMediaElement.pluginApi = player;
-
-						pluginMediaElement.success(pluginMediaElement, pluginMediaElement.pluginElement);
-					});
-				}
-				else {
-					console.warn("You need to include froogaloop for vimeo to work");
+						'<embed id="' + pluginid + '" name="' + pluginid + '" ' +
+						'play="true" ' +
+						'loop="false" ' +
+						'quality="high" ' +
+						'bgcolor="#000000" ' +
+						'wmode="transparent" ' +
+						'allowScriptAccess="' + options.flashScriptAccess + '" ' +
+						'allowFullScreen="true" ' +
+						'type="application/x-shockwave-flash" pluginspage="//www.macromedia.com/go/getflashplayer" ' +
+						'src="' + options.pluginPath + options.flashName + '" ' +
+						'flashvars="' + initVars.join('&') + '" ' +
+						'width="' + width + '" ' +
+						'height="' + height + '" ' +
+						'scale="default"' +
+						'class="th-media-shim"></embed>';
 				}
 				break;
 		}
@@ -1658,49 +1242,15 @@ mejs.HtmlMediaElementShim = {
 		htmlMediaElement.style.display = 'none';
 		// prevent browser from autoplaying when using a plugin
 		htmlMediaElement.removeAttribute('autoplay');
-
 		return pluginMediaElement;
 	},
 
-	updateNative: function(playback, options, autoplay, preload) {
-
-		var htmlMediaElement = playback.htmlMediaElement,
-			m;
-
-
+	updateNative: function (playback, options) {
+		var htmlMediaElement = playback.htmlMediaElement, m;
 		// add methods to video object to bring it into parity with Flash Object
 		for (m in mejs.HtmlMediaElement) {
 			htmlMediaElement[m] = mejs.HtmlMediaElement[m];
 		}
-
-		/*
-		Chrome now supports preload="none"
-		if (mejs.MediaFeatures.isChrome) {
-
-			// special case to enforce preload attribute (Chrome doesn't respect this)
-			if (preload === 'none' && !autoplay) {
-
-				// forces the browser to stop loading (note: fails in IE9)
-				htmlMediaElement.src = '';
-				htmlMediaElement.load();
-				htmlMediaElement.canceledPreload = true;
-
-				htmlMediaElement.addEventListener('play',function() {
-					if (htmlMediaElement.canceledPreload) {
-						htmlMediaElement.src = playback.url;
-						htmlMediaElement.load();
-						htmlMediaElement.play();
-						htmlMediaElement.canceledPreload = false;
-					}
-				}, false);
-			// for some reason Chrome forgets how to autoplay sometimes.
-			} else if (autoplay) {
-				htmlMediaElement.load();
-				htmlMediaElement.play();
-			}
-		}
-		*/
-
 		// fire success code
 		options.success(htmlMediaElement, htmlMediaElement);
 
@@ -1708,734 +1258,5 @@ mejs.HtmlMediaElementShim = {
 	}
 };
 
-/*
- - test on IE (object vs. embed)
- - determine when to use iframe (Firefox, Safari, Mobile) vs. Flash (Chrome, IE)
- - fullscreen?
-*/
-
-// YouTube Flash and Iframe API
-mejs.YouTubeApi = {
-	isIframeStarted: false,
-	isIframeLoaded: false,
-	loadIframeApi: function(yt) {
-		if (!this.isIframeStarted) {
-			var tag = document.createElement('script');
-			tag.src = yt.scheme + "www.youtube.com/player_api";
-			var firstScriptTag = document.getElementsByTagName('script')[0];
-			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-			this.isIframeStarted = true;
-		}
-	},
-	iframeQueue: [],
-	enqueueIframe: function(yt) {
-
-		if (this.isLoaded) {
-			this.createIframe(yt);
-		} else {
-			this.loadIframeApi(yt);
-			this.iframeQueue.push(yt);
-		}
-	},
-	createIframe: function(settings) {
-
-		var
-		pluginMediaElement = settings.pluginMediaElement,
-		defaultVars = {controls:0, wmode:'transparent'},
-		player = new YT.Player(settings.containerId, {
-			height: settings.height,
-			width: settings.width,
-			videoId: settings.videoId,
-			playerVars: mejs.$.extend({}, defaultVars, settings.variables),
-			events: {
-				'onReady': function(e) {
-
-					// wrapper to match
-					player.setVideoSize = function(width, height) {
-						player.setSize(width, height);
-					};
-
-					// hook up iframe object to MEjs
-					settings.pluginMediaElement.pluginApi = player;
-					settings.pluginMediaElement.pluginElement = document.getElementById(settings.containerId);
-
-					// init mejs
-					pluginMediaElement.success(pluginMediaElement, pluginMediaElement.pluginElement);
-
-					mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'canplay');
-
-					// create timer
-					setInterval(function() {
-						mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'timeupdate');
-					}, 250);
-
-					if (typeof pluginMediaElement.attributes.autoplay !== 'undefined') {
-						player.playVideo();
-					}
-				},
-				'onStateChange': function(e) {
-
-					mejs.YouTubeApi.handleStateChange(e.data, player, pluginMediaElement);
-
-				}
-			}
-		});
-	},
-
-	createEvent: function (player, pluginMediaElement, eventName) {
-		var event = {
-			type: eventName,
-			target: pluginMediaElement
-		};
-
-		if (player && player.getDuration) {
-
-			// time
-			pluginMediaElement.currentTime = event.currentTime = player.getCurrentTime();
-			pluginMediaElement.duration = event.duration = player.getDuration();
-
-			// state
-			event.paused = pluginMediaElement.paused;
-			event.ended = pluginMediaElement.ended;
-
-			// sound
-			event.muted = player.isMuted();
-			event.volume = player.getVolume() / 100;
-
-			// progress
-			event.bytesTotal = player.getVideoBytesTotal();
-			event.bufferedBytes = player.getVideoBytesLoaded();
-
-			// fake the W3C buffered TimeRange
-			var bufferedTime = event.bufferedBytes / event.bytesTotal * event.duration;
-
-			event.target.buffered = event.buffered = {
-				start: function(index) {
-					return 0;
-				},
-				end: function (index) {
-					return bufferedTime;
-				},
-				length: 1
-			};
-
-		}
-
-		// send event up the chain
-		pluginMediaElement.dispatchEvent(event);
-	},
-
-	iFrameReady: function() {
-
-		this.isLoaded = true;
-		this.isIframeLoaded = true;
-
-		while (this.iframeQueue.length > 0) {
-			var settings = this.iframeQueue.pop();
-			this.createIframe(settings);
-		}
-	},
-
-	// FLASH!
-	flashPlayers: {},
-	createFlash: function(settings) {
-
-		this.flashPlayers[settings.pluginId] = settings;
-
-		/*
-		settings.container.innerHTML =
-			'<object type="application/x-shockwave-flash" id="' + settings.pluginId + '" data="' + settings.scheme + 'www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=' + settings.pluginId  + '&amp;version=3&amp;autoplay=0&amp;controls=0&amp;modestbranding=1&loop=0" ' +
-				'width="' + settings.width + '" height="' + settings.height + '" style="visibility: visible; " class="th-media-shim">' +
-				'<param name="allowScriptAccess" value="sameDomain">' +
-				'<param name="wmode" value="transparent">' +
-			'</object>';
-		*/
-
-		var specialIEContainer,
-			youtubeUrl = settings.scheme + 'www.youtube.com/apiplayer?enablejsapi=1&amp;playerapiid=' + settings.pluginId  + '&amp;version=3&amp;autoplay=0&amp;controls=0&amp;modestbranding=1&loop=0';
-
-		if (mejs.MediaFeatures.isIE) {
-
-			specialIEContainer = document.createElement('div');
-			settings.container.appendChild(specialIEContainer);
-			specialIEContainer.outerHTML = '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="' + settings.scheme + 'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" ' +
-'id="' + settings.pluginId + '" width="' + settings.width + '" height="' + settings.height + '" class="th-media-shim">' +
-	'<param name="movie" value="' + youtubeUrl + '" />' +
-	'<param name="wmode" value="transparent" />' +
-	'<param name="allowScriptAccess" value="' + options.flashScriptAccess + '" />' +
-	'<param name="allowFullScreen" value="true" />' +
-'</object>';
-		} else {
-		settings.container.innerHTML =
-			'<object type="application/x-shockwave-flash" id="' + settings.pluginId + '" data="' + youtubeUrl + '" ' +
-				'width="' + settings.width + '" height="' + settings.height + '" style="visibility: visible; " class="th-media-shim">' +
-				'<param name="allowScriptAccess" value="' + options.flashScriptAccess + '">' +
-				'<param name="wmode" value="transparent">' +
-			'</object>';
-		}
-
-	},
-
-	flashReady: function(id) {
-		var
-			settings = this.flashPlayers[id],
-			player = document.getElementById(id),
-			pluginMediaElement = settings.pluginMediaElement;
-
-		// hook up and return to MediaELementPlayer.success
-		pluginMediaElement.pluginApi =
-		pluginMediaElement.pluginElement = player;
-
-		settings.success(pluginMediaElement, pluginMediaElement.pluginElement);
-
-		// load the youtube video
-		player.cueVideoById(settings.videoId);
-
-		var callbackName = settings.containerId + '_callback';
-
-		window[callbackName] = function(e) {
-			mejs.YouTubeApi.handleStateChange(e, player, pluginMediaElement);
-		};
-
-		player.addEventListener('onStateChange', callbackName);
-
-		setInterval(function() {
-			mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'timeupdate');
-		}, 250);
-
-		mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'canplay');
-	},
-
-	handleStateChange: function(youTubeState, player, pluginMediaElement) {
-		switch (youTubeState) {
-			case -1: // not started
-				pluginMediaElement.paused = true;
-				pluginMediaElement.ended = true;
-				mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'loadedmetadata');
-				//createYouTubeEvent(player, pluginMediaElement, 'loadeddata');
-				break;
-			case 0:
-				pluginMediaElement.paused = false;
-				pluginMediaElement.ended = true;
-				mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'ended');
-				break;
-			case 1:
-				pluginMediaElement.paused = false;
-				pluginMediaElement.ended = false;
-				mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'play');
-				mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'playing');
-				break;
-			case 2:
-				pluginMediaElement.paused = true;
-				pluginMediaElement.ended = false;
-				mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'pause');
-				break;
-			case 3: // buffering
-				mejs.YouTubeApi.createEvent(player, pluginMediaElement, 'progress');
-				break;
-			case 5:
-				// cued?
-				break;
-
-		}
-
-	}
-}
-// IFRAME
-window.onYouTubePlayerAPIReady = function() {
-	mejs.YouTubeApi.iFrameReady();
-};
-// FLASH
-window.onYouTubePlayerReady = function(id) {
-	mejs.YouTubeApi.flashReady(id);
-};
-
 window.mejs = mejs;
 window.MediaElement = mejs.MediaElement;
-
-/**
- * Localize strings
- *
- * Include translations from JS files and method to pluralize properly strings.
- *
- */
-(function (doc, win, mejs, undefined) {
-
-	var i18n = {
-		/**
-		 * @type {String}
-		 */
-		'default': 'en',
-
-		/**
-		 * @type {String[]}
-		 */
-		locale: {
-			language: (mejs.i18n && mejs.i18n.locale.language) || '',
-			strings: (mejs.i18n && mejs.i18n.locale.strings) || {}
-		},
-
-		/**
-		 * Filters for available languages.
-		 *
-		 * This plural forms are grouped in family groups based on
-		 * https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Localization_and_Plurals#List_of_Plural_Rules
-		 * with some additions and corrections according to the Localization Guide list
-		 * (http://localization-guide.readthedocs.io/en/latest/l10n/pluralforms.html)
-		 *
-		 * Arguments are dynamic following the structure:
-		 * - argument1 : Number to determine form
-		 * - argument2...argumentN: Possible matches
-		 *
-		 * @type {Function[]}
-		 */
-		pluralForms: [
-			// 0: Chinese, Japanese, Korean, Persian, Turkish, Thai, Lao, Aymará,
-			// Tibetan, Chiga, Dzongkha, Indonesian, Lojban, Georgian, Kazakh, Khmer, Kyrgyz, Malay,
-			// Burmese, Yakut, Sundanese, Tatar, Uyghur, Vietnamese, Wolof
-			function () {
-				return arguments[1];
-			},
-			// 1: Danish, Dutch, English, Faroese, Frisian, German, Norwegian, Swedish, Estonian, Finnish,
-			// Hungarian, Basque, Greek, Hebrew, Italian, Portuguese, Spanish, Catalan, Afrikaans,
-			// Angika, Assamese, Asturian, Azerbaijani, Bulgarian, Bengali, Bodo, Aragonese, Dogri,
-			// Esperanto, Argentinean Spanish, Fulah, Friulian, Galician, Gujarati, Hausa,
-			// Hindi, Chhattisgarhi, Armenian, Interlingua, Greenlandic, Kannada, Kurdish, Letzeburgesch,
-			// Maithili, Malayalam, Mongolian, Manipuri, Marathi, Nahuatl, Neapolitan, Norwegian Bokmal,
-			// Nepali, Norwegian Nynorsk, Norwegian (old code), Northern Sotho, Oriya, Punjabi, Papiamento,
-			// Piemontese, Pashto, Romansh, Kinyarwanda, Santali, Scots, Sindhi, Northern Sami, Sinhala,
-			// Somali, Songhay, Albanian, Swahili, Tamil, Telugu, Turkmen, Urdu, Yoruba
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else {
-					return args[2];
-				}
-			},
-			// 2: French, Brazilian Portuguese, Acholi, Akan, Amharic, Mapudungun, Breton, Filipino,
-			// Gun, Lingala, Mauritian Creole, Malagasy, Maori, Occitan, Tajik, Tigrinya, Uzbek, Walloon
-			function () {
-				var args = arguments;
-				if ([0, 1].indexOf(args[0]) > -1) {
-					return args[1];
-				} else {
-					return args[2];
-				}
-			},
-			// 3: Latvian
-			function () {
-				var args = arguments;
-				if (args[0] % 10 === 1 && args[0] % 100 !== 11) {
-					return args[1];
-				} else if (args[0] !== 0) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 4: Scottish Gaelic
-			function () {
-				var args = arguments;
-				if (args[0] === 1 || args[0] === 11) {
-					return args[1];
-				} else if (args[0] === 2 || args[0] === 12) {
-					return args[2];
-				} else if (args[0] > 2 && args[0] < 20) {
-					return args[3];
-				} else {
-					return args[4];
-				}
-			},
-			// 5:  Romanian
-			function () {
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] === 0 || (args[0] % 100 > 0 && args[0] % 100 < 20)) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 6: Lithuanian
-			function () {
-				var args = arguments;
-				if (args[0] % 10 === 1 && args[0] % 100 !== 11) {
-					return args[1];
-				} else if (args[0] % 10 >= 2 && (args[0] % 100 < 10 || args[0] % 100 >= 20)) {
-					return args[2];
-				} else {
-					return [3];
-				}
-			},
-			// 7: Belarusian, Bosnian, Croatian, Serbian, Russian, Ukrainian
-			function () {
-				var args = arguments;
-				if (args[0] % 10 === 1 && args[0] % 100 !== 11) {
-					return args[1];
-				} else if (args[0] % 10 >= 2 && args[0] % 10 <= 4 && (args[0] % 100 < 10 || args[0] % 100 >= 20)) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 8:  Slovak, Czech
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] >= 2 && args[0] <= 4) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 9: Polish
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] % 10 >= 2 && args[0] % 10 <= 4 && (args[0] % 100 < 10 || args[0] % 100 >= 20)) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 10: Slovenian
-			function () {
-				var args = arguments;
-				if (args[0] % 100 === 1) {
-					return args[2];
-				} else if (args[0] % 100 === 2) {
-					return args[3];
-				} else if (args[0] % 100 === 3 || args[0] % 100 === 4) {
-					return args[4];
-				} else {
-					return args[1];
-				}
-			},
-			// 11: Irish Gaelic
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] === 2) {
-					return args[2];
-				} else if (args[0] > 2 && args[0] < 7) {
-					return args[3];
-				} else if (args[0] > 6 && args[0] < 11) {
-					return args[4];
-				} else {
-					return args[5];
-				}
-			},
-			// 12: Arabic
-			function () {
-				var args = arguments;
-				if (args[0] === 0) {
-					return args[1];
-				} else if (args[0] === 1) {
-					return args[2];
-				} else if (args[0] === 2) {
-					return args[3];
-				} else if (args[0] % 100 >= 3 && args[0] % 100 <= 10) {
-					return args[4];
-				} else if (args[0] % 100 >= 11) {
-					return args[5];
-				} else {
-					return args[6];
-				}
-			},
-			// 13: Maltese
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] === 0 || (args[0] % 100 > 1 && args[0] % 100 < 11)) {
-					return args[2];
-				} else if (args[0] % 100 > 10 && args[0] % 100 < 20) {
-					return args[3];
-				} else {
-					return args[4];
-				}
-
-			},
-			// 14: Macedonian
-			function () {
-				var args = arguments;
-				if (args[0] % 10 === 1) {
-					return args[1];
-				} else if (args[0] % 10 === 2) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 15:  Icelandic
-			function () {
-				var args = arguments;
-				if (args[0] !== 11 && args[0] % 10 === 1) {
-					return args[1];
-				} else {
-					return args[2];
-				}
-			},
-			// New additions
-
-			// 16:  Kashubian
-			// Note: in https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Localization_and_Plurals#List_of_Plural_Rules
-			// Breton is listed as #16 but in the Localization Guide it belongs to the group 2
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] % 10 >= 2 && args[0] % 10 <= 4 && (args[0] % 100 < 10 || args[0] % 100 >= 20)) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			},
-			// 17:  Welsh
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] === 2) {
-					return args[2];
-				} else if (args[0] !== 8 && args[0] !== 11) {
-					return args[3];
-				} else {
-					return args[4];
-				}
-			},
-			// 18:  Javanese
-			function () {
-				var args = arguments;
-				if (args[0] === 0) {
-					return args[1];
-				} else {
-					return args[2];
-				}
-			},
-			// 19:  Cornish
-			function () {
-				var args = arguments;
-				if (args[0] === 1) {
-					return args[1];
-				} else if (args[0] === 2) {
-					return args[2];
-				} else if (args[0] === 3) {
-					return args[3];
-				} else {
-					return args[4];
-				}
-			},
-			// 20:  Mandinka
-			function () {
-				var args = arguments;
-				if (args[0] === 0) {
-					return args[1];
-				} else if (args[0] === 1) {
-					return args[2];
-				} else {
-					return args[3];
-				}
-			}
-		],
-		/**
-		 * Get specified language
-		 *
-		 */
-		getLanguage: function () {
-			var language = i18n.locale.language || i18n['default'];
-			return /^(x\-)?[a-z]{2,}(\-\w{2,})?(\-\w{2,})?$/.exec(language) ? language : i18n['default'];
-		},
-
-		/**
-		 * Translate a string to a specified language, including optionally a number to pluralize translation
-		 *
-		 * @param {String} message
-		 * @param {Number} pluralParam
-		 * @return {String}
-		 */
-		t: function (message, pluralParam) {
-
-			if (typeof message === 'string' && message.length) {
-
-				var
-					language = i18n.getLanguage(),
-					str,
-					pluralForm,
-					/**
-					 * Modify string using algorithm to detect plural forms.
-					 *
-					 * @private
-					 * @see http://stackoverflow.com/questions/1353408/messageformat-in-javascript-parameters-in-localized-ui-strings
-					 * @param {String|String[]} input   - String or array of strings to pick the plural form
-					 * @param {Number} number           - Number to determine the proper plural form
-					 * @param {Number} form             - Number of language family to apply plural form
-					 * @return {String}
-					 */
-					plural = function (input, number, form) {
-
-						if (typeof input !== 'object' || typeof number !== 'number' || typeof form !== 'number') {
-							return input;
-						}
-
-						if (typeof input === 'string') {
-							return input;
-						}
-
-						// Perform plural form or return original text
-						return i18n.pluralForms[form].apply(null, [number].concat(input));
-					},
-					/**
-					 *
-					 * @param {String} input
-					 * @return {String}
-					 */
-					escapeHTML = function (input) {
-						var map = {
-							'&': '&amp;',
-							'<': '&lt;',
-							'>': '&gt;',
-							'"': '&quot;'
-						};
-
-						return input.replace(/[&<>"]/g, function(c) {
-							return map[c];
-						});
-					}
-				;
-
-				// Fetch the localized version of the string
-				if (i18n.locale.strings && i18n.locale.strings[language]) {
-					str = i18n.locale.strings[language][message];
-					if (typeof pluralParam === 'number') {
-						pluralForm = i18n.locale.strings[language]['mejs.plural-form'];
-						str = plural.apply(null, [str, pluralParam, pluralForm]);
-					}
-				}
-
-				// Fallback to default language if requested uid is not translated
-				if (!str && i18n.locale.strings && i18n.locale.strings[i18n['default']]) {
-					str = i18n.locale.strings[i18n['default']][message];
-					if (typeof pluralParam === 'number') {
-						pluralForm = i18n.locale.strings[i18n['default']]['mejs.plural-form'];
-						str = plural.apply(null, [str, pluralParam, pluralForm]);
-
-					}
-				}
-
-				// As a last resort, use the requested uid, to mimic original behavior of i18n utils (in which uid was the english text)
-				str = str || message;
-
-				// Replace token
-				if (typeof pluralParam === 'number') {
-					str = str.replace('%1', pluralParam);
-				}
-
-				return escapeHTML(str);
-
-			}
-
-			return message;
-		}
-
-	};
-
-	// i18n fixes for compatibility with WordPress
-	if (typeof mejsL10n !== 'undefined') {
-		i18n.locale.language = mejsL10n.language;
-	}
-
-	// Register variable
-	mejs.i18n = i18n;
-
-
-}(document, window, mejs));
-
-// i18n fixes for compatibility with WordPress
-;(function (mejs, undefined) {
-
-	"use strict";
-
-	if (typeof mejsL10n !== 'undefined') {
-		mejs[mejsL10n.language] = mejsL10n.strings;
-	}
-
-}(mejs.i18n.locale.strings));
-/*!
- * This is a i18n.locale language object.
- *
- * English; This can serve as a template for other languages to translate
- *
- * @author
- *   TBD
- *   Sascha Greuel (Twitter: @SoftCreatR)
- *
- * @see
- *   me-i18n.js
- *
- * @params
- *  - exports - CommonJS, window ..
- */
-(function (exports) {
-    "use strict";
-
-    if (exports.en === undefined) {
-        exports.en = {
-            "mejs.plural-form": 1,
-
-            // me-shim
-            "mejs.download-file": "Download File",
-
-            // mep-feature-contextmenu
-            "mejs.fullscreen-off": "Turn off Fullscreen",
-            "mejs.fullscreen-on": "Go Fullscreen",
-            "mejs.download-video": "Download Video",
-
-            // mep-feature-fullscreen
-            "mejs.fullscreen": "Fullscreen",
-
-            // mep-feature-jumpforward
-            "mejs.time-jump-forward": ["Jump forward 1 second", "Jump forward %1 seconds"],
-
-            // mep-feature-playpause
-            "mejs.play": "Play",
-            "mejs.pause": "Pause",
-
-            // mep-feature-postroll
-            "mejs.close": "Close",
-
-            // mep-feature-progress
-            "mejs.time-slider": "Time Slider",
-            "mejs.time-help-text": "Use Left/Right Arrow keys to advance one second, Up/Down arrows to advance ten seconds.",
-
-            // mep-feature-skipback
-            "mejs.time-skip-back": ["Skip back 1 second", "Skip back %1 seconds"],
-
-            // mep-feature-tracks
-            "mejs.captions-subtitles": "Captions/Subtitles",
-            "mejs.none": "None",
-
-            // mep-feature-volume
-            "mejs.mute-toggle": "Mute Toggle",
-            "mejs.volume-help-text": "Use Up/Down Arrow keys to increase or decrease volume.",
-            "mejs.unmute": "Unmute",
-            "mejs.mute": "Mute",
-            "mejs.volume-slider": "Volume Slider",
-
-            // mep-player
-            "mejs.video-player": "Video Player",
-            "mejs.audio-player": "Audio Player",
-
-            // mep-feature-ads
-            "mejs.ad-skip": "Skip ad",
-            "mejs.ad-skip-info": ["Skip in 1 second", "Skip in %1 seconds"],
-
-            // mep-feature-sourcechooser
-            "mejs.source-chooser": "Source Chooser"
-        };
-    }
-}(mejs.i18n.locale.strings));

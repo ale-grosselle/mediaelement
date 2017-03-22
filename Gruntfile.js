@@ -34,9 +34,9 @@ module.exports = function(grunt) {
                     'src/js/me-plugindetector.js',
                     'src/js/me-featuredetection.js',
                     'src/js/me-mediaelements.js',
-                    'src/js/me-shim.js',
+                    'src/js/me-shim.js'/*,
                     'src/js/me-i18n.js',
-                    'src/js/me-i18n-locale-en.js'
+                    'src/js/me-i18n-locale-en.js'*/
                 ],
                 dest: 'build/mediaelement.js'
             },
