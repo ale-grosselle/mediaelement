@@ -249,24 +249,6 @@
 				t.buildposter(t, t.container, t.media);
 				// reset all layers and controls
 				t.setPlayerSize(t.width, t.height);
-
-				// controls fade
-				if (!mejs.MediaFeatures.hasTouch) {
-					// create callback here since it needs access to current
-					// MediaElement object
-					t.clickToPlayPauseCallback = function () {
-						if (t.options.clickToPlayPause) {
-							if (t.media.paused) {
-								t.play();
-							} else {
-								t.pause();
-							}
-						}
-					};
-					// click to play/pause
-					t.media.addEventListener('click', t.clickToPlayPauseCallback, false);
-				}
-
 				// force autoplay for all
 				if (autoplay) {
 					t.play();

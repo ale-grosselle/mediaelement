@@ -118,7 +118,7 @@ mejs.HtmlMediaElementShim = {
 	determinePlayback: function(htmlMediaElement, src, method){
 		return {
 			htmlMediaElement: htmlMediaElement,
-			method: 'native',
+			method: method,
 			url: src
 		}
 	},
