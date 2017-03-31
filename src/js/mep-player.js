@@ -33,8 +33,6 @@
 		autoRewind: true,
 		// resize to media dimensions
 		enableAutosize: false,
-		// Enable click video element to toggle play/pause
-		clickToPlayPause: true,
 		// force iPad's native controls
 		iPadUseNativeControls: false,
 		// force iPhone's native controls
@@ -151,8 +149,7 @@
 				t.$media.removeAttr('controls');
 				// build container
 				t.container =
-					$('<div id="' + t.id + '" class="th-video-wrapper ' +
-						'" tabindex="0"' + '">' +
+					$('<div id="' + t.id + '" class="th-video-wrapper">' +
 						'<div class="th-video-inner">' +
 						'<div class="th-video-element"></div>' +
 						'<div class="th-poster-element"></div>' +
@@ -288,7 +285,7 @@
 							t.media.setCurrentTime(0);
 						} catch (exp) {}
 					}
-					t.media.pause();
+					//t.media.pause();
 					if (t.options.loop) {
 						t.play();
 					}
@@ -352,6 +349,7 @@
 						.appendTo(mainContainer.find(".th-poster-element")),
 				posterUrl = player.$media.attr('poster');
 
+
 			// prioriy goes to option (this is useful if you need to support iOS 3.x (iOS completely fails with poster)
 			if (player.options.poster !== '') {
 				posterUrl = player.options.poster;
@@ -368,11 +366,17 @@
 				poster.hide();
 			}, false);
 
-			if (player.options.showPosterWhenEnded && player.options.autoRewind) {
-				media.addEventListener('ended', function () {
+			media.addEventListener('seeked', function () {
+				poster.hide();
+			}, false);
+
+			media.addEventListener('ended', function () {
+				if (player.options.showPosterWhenEnded && player.options.autoRewind) {
 					poster.show();
-				}, false);
-			}
+				}else if(navigator.userAgent.indexOf("MSIE 9") > 0){
+					poster.show();
+				}
+			}, false);
 		},
 		hidePoster: function () {
 			var t = this;
