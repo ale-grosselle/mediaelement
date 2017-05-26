@@ -371,9 +371,7 @@
 			}, false);
 
 			media.addEventListener('ended', function () {
-				if (player.options.showPosterWhenEnded && player.options.autoRewind) {
-					poster.show();
-				}else if(navigator.userAgent.indexOf("MSIE 9") > 0){
+				if (player.options.showPosterWhenEnded || navigator.userAgent.indexOf("MSIE 9")) {
 					poster.show();
 				}
 			}, false);
